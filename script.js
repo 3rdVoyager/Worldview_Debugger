@@ -1,9 +1,9 @@
 const WORLDVIEW_DATA = {
   secularism: {
     name: 'Secularism',
-    status: 'High Risk',
-    risk: 'High',
-    damage_percentage: 72,
+    status: 'SYSTEM_DEPENDENCY_ERROR',
+    risk: 'Moderate',
+    damage_percentage: 16,
     threats: [],
     disciplines: {
       Theology: 'Atheism',
@@ -38,9 +38,9 @@ const WORLDVIEW_DATA = {
   },
   marxism: {
     name: 'Marxism',
-    status: 'Active Corruption',
-    risk: 'Severe',
-    damage_percentage: 84,
+    status: 'SYSTEM_TAKEOVER_IMMINENT',
+    risk: 'Critical',
+    damage_percentage: 7,
     threats: [],
     disciplines: {
       Theology: 'Atheism',
@@ -75,9 +75,9 @@ const WORLDVIEW_DATA = {
   },
   postmodernism: {
     name: 'Postmodernism',
-    status: 'High Instability',
+    status: 'CIRCULAR_DEPENDENCY_DETECTED',
     risk: 'Moderate',
-    damage_percentage: 55,
+    damage_percentage: 10,
     threats: [],
     disciplines: {
       Theology: 'Theological Suspicion',
@@ -112,9 +112,9 @@ const WORLDVIEW_DATA = {
   },
   newSpirituality: {
     name: 'New Spirituality',
-    status: 'Cloud System Overload',
+    status: 'CLOUD_SERVICE_OVERLOAD',
     risk: 'Moderate',
-    damage_percentage: 48,
+    damage_percentage: 15,
     threats: [],
     disciplines: {
       Theology: 'Pantheism',
@@ -149,9 +149,9 @@ const WORLDVIEW_DATA = {
   },
   islam: {
     name: 'Islam',
-    status: 'Doctrinal Tension',
-    risk: 'High',
-    damage_percentage: 63,
+    status: 'INTERNAL_SERVER_ERROR',
+    risk: 'Critical',
+    damage_percentage: 25,
     threats: [],
     disciplines: {
       Theology: 'Monotheism',
@@ -192,7 +192,6 @@ const activeName = document.getElementById('activeName');
 const activeStatus = document.getElementById('activeStatus');
 const disciplinesContainer = document.getElementById('disciplines');
 const analyzeBtn = document.getElementById('analyzeBtn');
-const patchBtn = document.getElementById('patchBtn');
 const loadingState = document.getElementById('loadingState');
 const bugList = document.getElementById('bugList');
 const consoleOutput = document.getElementById('consoleOutput');
@@ -319,7 +318,7 @@ function setActiveView(key) {
   renderDisciplines(worldview);
   renderConsole(worldview);
   updateGlobalStatus();
-  patchBtn.disabled = false;
+  // patch button removed; keep patch logic available but UI no longer exposes it
 }
 
 function showAnalysis() {
@@ -348,7 +347,6 @@ function showAnalysis() {
 function applyPatch() {
   const worldview = WORLDVIEW_DATA[activeKey];
   patchApplied = true;
-  patchBtn.disabled = true;
   document.body.classList.add('patched');
   consoleBox.classList.add('recode-flash');
   consoleOutput.textContent = 'Applying biblical patch...';
@@ -430,7 +428,6 @@ function initTerminal() {
 }
 
 analyzeBtn.addEventListener('click', showAnalysis);
-patchBtn.addEventListener('click', applyPatch);
 
 renderWorldviewSelector();
 setActiveView(activeKey);
