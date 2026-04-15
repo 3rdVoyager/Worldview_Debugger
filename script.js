@@ -3,11 +3,17 @@ const WORLDVIEW_DATA = {
     name: 'Secularism',
     status: 'High Risk',
     infectionLevel: 'High',
-    pillars: {
-      origin: 'Humans emerged through natural processes, but are now the measure of all things.',
-      meaning: 'Meaning comes from human flourishing, autonomy, and self-created goals.',
-      morality: 'Ethics are built through reason, empathy, and consensus.',
-      destiny: 'Human progress is the best available future; death remains final.'
+    disciplines: {
+      Theology: 'God is treated as private preference rather than public truth.',
+      Philosophy: 'Reason is detached from any transcendent ground for objective truth.',
+      Ethics: 'Moral norms are negotiated by consensus and utility.',
+      Biology: 'Human life is reduced to advanced material processes only.',
+      Psychology: 'Identity is framed as self-authored without spiritual accountability.',
+      Sociology: 'Institutions are valued mainly for social efficiency and stability.',
+      Law: 'Law is grounded in procedural rights more than divine justice.',
+      Politics: 'Authority is justified by popular will and pragmatic outcomes.',
+      Economics: 'Markets and consumption are treated as primary engines of meaning.',
+      History: 'History is interpreted as progress without providential direction.'
     },
     bugs: [
       'Borrows moral language from a worldview that has no transcendent moral source.',
@@ -15,22 +21,34 @@ const WORLDVIEW_DATA = {
       'Makes autonomy the highest good while depending on shared norms it cannot ultimately justify.',
       'Promises progress without a fixed standard for what counts as moral improvement.'
     ],
-    christianPatch: [
-      'Human dignity is rooted in the image of God, not social agreement.',
-      'Moral truth is anchored in God’s character, giving ethics objective weight.',
-      'Human flourishing is real, but it must be ordered under the Creator’s design.',
-      'Hope is not vague progress, but redemption and resurrection in Christ.'
-    ]
+    christianPatch: {
+      Theology: 'God is Lord over all life and knowledge, not a private add-on.',
+      Philosophy: 'Truth is coherent because reality is grounded in the Creator.',
+      Ethics: 'Moral law is objective because it reflects God’s holy character.',
+      Biology: 'Human beings are embodied image-bearers with irreducible dignity.',
+      Psychology: 'Personhood is found in Christ, where identity and purpose are restored.',
+      Sociology: 'Society flourishes when love of God and neighbor shapes institutions.',
+      Law: 'Justice is measured by righteousness, mercy, and truth before God.',
+      Politics: 'Government is accountable to God and limited by moral law.',
+      Economics: 'Stewardship, generosity, and honesty govern the use of resources.',
+      History: 'History has direction under God and culminates in Christ’s kingdom.'
+    }
   },
   marxism: {
     name: 'Marxism',
     status: 'Active Corruption',
     infectionLevel: 'Severe',
-    pillars: {
-      origin: 'History is driven by material conditions and class conflict.',
-      meaning: 'Meaning is found in collective struggle and the advancement of the oppressed class.',
-      morality: 'Moral categories are tools shaped by economic power structures.',
-      destiny: 'A classless utopia is expected through revolution and redistribution.'
+    disciplines: {
+      Theology: 'Religion is recast as ideology that masks class power.',
+      Philosophy: 'Dialectical materialism is treated as the final explanatory framework.',
+      Ethics: 'Morality is subordinated to class struggle and revolutionary outcomes.',
+      Biology: 'Human nature is viewed as primarily shaped by material conditions.',
+      Psychology: 'Consciousness is interpreted as a byproduct of economic structures.',
+      Sociology: 'All institutions are analyzed through oppressor-oppressed dynamics.',
+      Law: 'Law is seen mainly as an instrument of ruling-class control.',
+      Politics: 'Power transfer through revolution is prioritized over reform.',
+      Economics: 'Centralized ownership is treated as the cure for injustice.',
+      History: 'History is framed as inevitable class conflict toward utopia.'
     },
     bugs: [
       'Claims to reveal objective truth while reducing all truth claims to class interests.',
@@ -38,22 +56,34 @@ const WORLDVIEW_DATA = {
       'Utopian promises repeatedly collapse under the weight of coercion and human fallenness.',
       'Cannot provide a stable reason that one class must be treated as morally superior to another.'
     ],
-    christianPatch: [
-      'Scripture recognizes injustice, but also identifies sin as the root problem in every human heart.',
-      'Justice matters because God is righteous and condemns oppression.',
-      'No political system can save humanity; only Christ can transform hearts and communities.',
-      'The kingdom of God is not produced by revolution, but received through redemption.'
-    ]
+    christianPatch: {
+      Theology: 'God, not class conflict, is ultimate over history and judgment.',
+      Philosophy: 'Reality is more than matter; persons, truth, and morality are real.',
+      Ethics: 'Justice must reject oppression without excusing hatred or vengeance.',
+      Biology: 'Human nature is fallen across all classes, not innocent by position.',
+      Psychology: 'The heart needs repentance and renewal, not only social inversion.',
+      Sociology: 'Communities are healed by reconciliation, service, and covenant faithfulness.',
+      Law: 'Law should restrain evil and protect dignity without becoming tyranny.',
+      Politics: 'Power must be accountable, limited, and oriented to the common good.',
+      Economics: 'Work, property, generosity, and justice are held together in stewardship.',
+      History: 'Human hope is not utopia by force but redemption through Christ.'
+    }
   },
   postmodernism: {
     name: 'Postmodernism',
     status: 'High Instability',
     infectionLevel: 'Moderate',
-    pillars: {
-      origin: 'Reality is interpreted through language, power, and competing narratives.',
-      meaning: 'Meaning is fluid, negotiated, and dependent on context.',
-      morality: 'Moral claims are socially constructed and tied to power relations.',
-      destiny: 'There is no final story, only local narratives that rise and fall.'
+    disciplines: {
+      Theology: 'All theological claims are treated as community constructions.',
+      Philosophy: 'Certainty is rejected and metanarratives are deconstructed.',
+      Ethics: 'Moral language is often reduced to preference and power location.',
+      Biology: 'Embodied realities are interpreted through fluid identity frameworks.',
+      Psychology: 'Selfhood is fragmented across narratives and social scripts.',
+      Sociology: 'Social analysis centers on discourse, power, and identity blocs.',
+      Law: 'Legal reasoning is viewed as contingent negotiation among groups.',
+      Politics: 'Political legitimacy shifts with narrative coalitions and critique.',
+      Economics: 'Economic structures are interpreted mainly as power narratives.',
+      History: 'History is treated as competing stories without final coherence.'
     },
     bugs: [
       'If all truth is relative, that claim itself cannot be universal.',
@@ -61,22 +91,34 @@ const WORLDVIEW_DATA = {
       'Cannot explain why justice should matter if morality is only constructed.',
       'Leaves meaning unstable, because interpretation has no final anchor.'
     ],
-    christianPatch: [
-      'Truth is not created by language; it is revealed by the God who made reality.',
-      'Meaning is stable because creation has purpose and history has direction.',
-      'Justice is more than a social construct because God is holy and righteous.',
-      'The gospel is the true metanarrative that explains human brokenness and redemption.'
-    ]
+    christianPatch: {
+      Theology: 'God reveals truth that stands above shifting discourse communities.',
+      Philosophy: 'Objective truth exists because reality is grounded in God.',
+      Ethics: 'Good and evil are real because God is holy and just.',
+      Biology: 'Embodiment is a gift of creation, not a disposable construct.',
+      Psychology: 'The self is unified in relationship to God and neighbor.',
+      Sociology: 'Communities are called to truthful speech and covenantal love.',
+      Law: 'Law can pursue justice because moral standards are not arbitrary.',
+      Politics: 'Public life can seek truth and justice beyond tribal narratives.',
+      Economics: 'Economic life is accountable to truth, fairness, and stewardship.',
+      History: 'History has coherence in creation, fall, redemption, and restoration.'
+    }
   },
   newSpirituality: {
     name: 'New Spirituality',
-    status: '',
+    status: 'Cloud System Overload',
     infectionLevel: 'Moderate',
-    pillars: {
-      origin: 'Reality is a blend of energy, consciousness, and personal intuition.',
-      meaning: 'Meaning is discovered by self-expression, inner peace, and spiritual growth.',
-      morality: 'Morality is whatever aligns with authentic inner desire and harm reduction.',
-      destiny: 'The self evolves through cycles, awakening, and expanded awareness.'
+    disciplines: {
+      Theology: 'The divine is personalized into flexible spiritual energy.',
+      Philosophy: 'Contradictory truth claims are blended without hard evaluation.',
+      Ethics: 'Authenticity is prioritized over objective moral accountability.',
+      Biology: 'Physical limits are often reframed as lower spiritual vibration.',
+      Psychology: 'Inner experience is treated as the highest authority for truth.',
+      Sociology: 'Community is optional and often replaced by curated spirituality.',
+      Law: 'Moral boundaries are viewed as restrictive to personal awakening.',
+      Politics: 'Public ethics are minimized in favor of private transformation.',
+      Economics: 'Spirituality is frequently commodified through practices and products.',
+      History: 'Traditions are mined selectively with little historical accountability.'
     },
     bugs: [
       'Treats inner feeling as a reliable guide without testing whether desires are truthful.',
@@ -84,22 +126,34 @@ const WORLDVIEW_DATA = {
       'Cannot explain guilt, evil, or brokenness beyond blocked energy or lower consciousness.',
       'Offers transformation without a clear account of sin, forgiveness, or reconciliation.'
     ],
-    christianPatch: [
-      'True spiritual life begins with the living God, not self-generated energy.',
-      'Human brokenness is deeper than imbalance; it is sin that requires forgiveness.',
-      'Authenticity matters, but it must be shaped by truth rather than desire alone.',
-      'Transformation is possible through the Holy Spirit, who renews from the inside out.'
-    ]
+    christianPatch: {
+      Theology: 'God is personal, holy, and self-revealing, not an impersonal force.',
+      Philosophy: 'Truth must be coherent and tested, not merely felt.',
+      Ethics: 'Love and holiness define goodness beyond personal preference.',
+      Biology: 'Bodies matter as created gifts, awaiting resurrection hope.',
+      Psychology: 'Healing includes repentance, forgiveness, and renewed desires.',
+      Sociology: 'Faith matures in accountable community, not isolated spirituality.',
+      Law: 'Moral boundaries protect life, dignity, and neighbor-love.',
+      Politics: 'Public life requires justice and mercy, not only private serenity.',
+      Economics: 'Worship is not a commodity; stewardship resists spiritual consumerism.',
+      History: 'God works in real history, culminating in Christ’s incarnation and resurrection.'
+    }
   },
   islam: {
     name: 'Islam',
     status: 'Doctrinal Tension',
     infectionLevel: 'High',
-    pillars: {
-      origin: 'Allah created all things by will and command.',
-      meaning: 'Meaning is found in submission to Allah and faithful obedience.',
-      morality: 'Morality is revealed by divine command and prophetic example.',
-      destiny: 'Final judgment determines paradise or punishment.'
+    disciplines: {
+      Theology: 'God is one, yet the Trinity and incarnation are denied.',
+      Philosophy: 'Revelation is prioritized, but assurance of atonement remains unresolved.',
+      Ethics: 'Obedience is central, yet grace and transformed sonship are unclear.',
+      Biology: 'Human nature is accountable to God but not healed through union with Christ.',
+      Psychology: 'Assurance is often fragile because final standing depends on weighing deeds.',
+      Sociology: 'Community identity is strong, but gospel reconciliation is absent.',
+      Law: 'Divine law is central, yet the cross as fulfillment of justice is rejected.',
+      Politics: 'Religion and governance intertwine without a robust church-state distinction.',
+      Economics: 'Economic ethics are present, but redemption logic is not Christ-centered.',
+      History: 'Jesus is honored prophetically while crucifixion-resurrection claims are denied.'
     },
     bugs: [
       'Affirms divine transcendence but offers no fully personal, relational God as eternally triune love.',
@@ -107,19 +161,25 @@ const WORLDVIEW_DATA = {
       'Rejects the crucifixion and resurrection, which removes the center of Christian atonement and hope.',
       'Cannot reconcile a holy standard with universal human failure apart from grace.'
     ],
-    christianPatch: [
-      'God is not only one, but triune, and therefore eternally loving and relational.',
-      'Salvation is by grace through faith, not by human merit or performance.',
-      'The cross and resurrection provide real atonement, forgiveness, and victory over death.',
-      'Assurance rests on Christ’s finished work, not fragile self-justification.'
-    ]
+    christianPatch: {
+      Theology: 'God is one being in three persons: Father, Son, and Holy Spirit.',
+      Philosophy: 'Truth is centered in Christ, where justice and mercy meet coherently.',
+      Ethics: 'Obedience flows from grace, not from fear-driven self-justification.',
+      Biology: 'Humanity is restored through Christ’s incarnation, death, and resurrection.',
+      Psychology: 'Believers can have assurance because salvation rests on Christ’s finished work.',
+      Sociology: 'The church is a reconciled people from every nation under one Lord.',
+      Law: 'The law is fulfilled in Christ, who bears judgment and grants righteousness.',
+      Politics: 'Earthly authority is limited under God, and conscience is accountable to Christ.',
+      Economics: 'Generosity and justice flow from grace and stewardship before God.',
+      History: 'The gospel stands on historical crucifixion and resurrection, not symbolic myth.'
+    }
   }
 };
 
 const worldviewList = document.getElementById('worldviewList');
 const activeName = document.getElementById('activeName');
 const activeStatus = document.getElementById('activeStatus');
-const pillarsContainer = document.getElementById('pillars');
+const disciplinesContainer = document.getElementById('disciplines');
 const analyzeBtn = document.getElementById('analyzeBtn');
 const patchBtn = document.getElementById('patchBtn');
 const loadingState = document.getElementById('loadingState');
@@ -164,18 +224,15 @@ function renderWorldviewSelector() {
   });
 }
 
-function renderPillars(worldview) {
-  const pillarEntries = patchApplied
-    ? worldview.christianPatch.map((value, index) => [
-        ['Origin', 'Meaning', 'Morality', 'Destiny'][index],
-        value
-      ])
-    : Object.entries(worldview.pillars);
+function renderDisciplines(worldview) {
+  const disciplineEntries = patchApplied
+    ? Object.entries(worldview.christianPatch)
+    : Object.entries(worldview.disciplines);
 
-  pillarsContainer.innerHTML = pillarEntries.map(([label, value]) => `
-    <article class="pillar-box">
-      <span class="pillar-label">${label}</span>
-      <p class="pillar-text">${escapeHtml(value)}</p>
+  disciplinesContainer.innerHTML = disciplineEntries.map(([label, value]) => `
+    <article class="discipline-box">
+      <span class="discipline-label">${label}</span>
+      <p class="discipline-text">${escapeHtml(value)}</p>
     </article>
   `).join('');
 }
@@ -207,7 +264,7 @@ function setActiveView(key) {
   renderWorldviewSelector();
   const worldview = WORLDVIEW_DATA[key];
   activeName.textContent = worldview.name;
-  renderPillars(worldview);
+  renderDisciplines(worldview);
   renderConsole(worldview);
   updateGlobalStatus();
   patchBtn.disabled = false;
@@ -245,7 +302,7 @@ function applyPatch() {
   consoleOutput.textContent = 'Applying biblical patch...';
 
   setTimeout(() => {
-    renderPillars(worldview);
+    renderDisciplines(worldview);
     updateGlobalStatus();
     consoleOutput.textContent = `${worldview.name} has been patched with biblical response text.`;
     bugList.classList.add('hidden');
