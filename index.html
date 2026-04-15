@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Worldview Debugger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <h1>The Worldview Debugger</h1>
+        <p class="hero-copy">
+          Inspect buggy worldview programs, scan for logical faults, and apply the biblical patch to restore the system.
+        </p>
+      </div>
+      <div class="hero-status" id="globalStatus">
+        <span class="status-dot"></span>
+        <span>Diagnostic Mode</span>
+      </div>
+    </header>
+
+    <section class="selector-panel" aria-label="Worldview selection">
+      <div class="selector-header">
+        <div>
+          <p class="panel-label">Worldview Program Index</p>
+          <h2 class="selector-title">Choose a program to inspect</h2>
+        </div>
+      </div>
+      <ul class="worldview-list" id="worldviewList" aria-label="Available worldviews"></ul>
+    </section>
+
+    <section class="workspace">
+      <div class="workspace-panel">
+        <div class="panel-header">
+          <div>
+            <p class="panel-label">Active View</p>
+            <h2 id="activeName">Naturalism</h2>
+          </div>
+          <span class="status-pill" id="activeStatus">Critical Vulnerability</span>
+        </div>
+
+        <div class="pillars" id="pillars"></div>
+
+        <div class="action-row">
+          <button class="btn btn-ghost" id="analyzeBtn">Analyze System</button>
+          <button class="btn btn-primary" id="patchBtn">Apply Biblical Patch</button>
+        </div>
+      </div>
+
+      <aside class="console-panel">
+        <div class="console-title-row">
+          <p class="panel-label">Diagnostic Console</p>
+          <span class="console-led"></span>
+        </div>
+        <div class="console-box" id="consoleBox">
+          <div class="console-output" id="consoleOutput"></div>
+          <div class="console-loading hidden" id="loadingState">Scanning for logical fallacies...</div>
+          <div class="console-bugs hidden" id="bugList"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="terminal-toggle" aria-label="Hidden terminal access">
+      <button class="terminal-hint" id="terminalToggle">Hidden Terminal</button>
+      <div class="terminal hidden" id="terminalPanel" aria-hidden="true">
+        <div class="terminal-topbar">
+          <span>Command Terminal</span>
+          <span class="terminal-microcopy">Type help for commands</span>
+        </div>
+        <div class="terminal-output" id="terminalOutput"></div>
+        <label class="terminal-input-row">
+          <span>&gt;</span>
+          <input id="terminalInput" type="text" autocomplete="off" placeholder="Enter command..." />
+        </label>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
