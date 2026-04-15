@@ -126,15 +126,94 @@ body::after {
 
 .worldview-name {
   color: #ecfdf5;
+  font-weight: 800;
+  font-size: 1.02rem;
 }
 
 .worldview-meta {
   color: var(--muted);
 }
 
+.worldview-badges {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  margin-left: 12px;
+  justify-self: end;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #000000; /* solid black interior */
+  color: #ffffff; /* white text */
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.08);
+  transform: none;
+  white-space: nowrap;
+  box-shadow: none; /* remove halo/glow */
+}
+
+.bubble::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 8px;
+  box-shadow: none;
+}
+
+.bubble.bubble-threat {
+  border-color: #10b981; /* neon green outline */
+  box-shadow: none; /* remove halo */
+}
+.bubble.bubble-threat::before { background: #10b981; }
+
+.bubble.bubble-risk {
+  border-color: #ef4444; /* neon red outline */
+  box-shadow: none;
+}
+.bubble.bubble-risk::before { background: #ef4444; }
+
+.bubble.bubble-status {
+  border-color: #f59e0b; /* neon amber outline */
+  box-shadow: none;
+}
+.bubble.bubble-status::before { background: #f59e0b; }
+
+.bubble.bubble-damage {
+  border-color: #6366f1; /* neon indigo outline */
+  box-shadow: none;
+}
+.bubble.bubble-damage::before { background: #6366f1; }
+
+.worldview-item .bubble { transform-origin: right center; }
+
+.worldview-item.active {
+  /* slightly increase weight for entire row when active */
+  font-weight: 700;
+}
+
 .worldview-item.active .worldview-name,
 .worldview-item.active .worldview-meta {
-  color: #6ee7b7;
+  color: #ecfdf5; /* keep active text white, not green */
+}
+
+/* Keep bubbles visually consistent but let them be slightly bolder */
+.worldview-item.active .bubble {
+  background: #000000;
+  color: #ffffff;
+  border-width: 1px;
+  font-weight: 650;
 }
 
 
@@ -186,11 +265,11 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.7);
-  box-shadow: var(--shadow);
+  padding: 0; /* remove outer padding so button controls layout */
+  border: 0; /* remove outer oval border */
+  border-radius: 0;
+  background: transparent; /* transparent so button provides background */
+  box-shadow: none; /* remove outer shadow */
   white-space: nowrap;
 }
 
@@ -374,6 +453,7 @@ h2 {
 
 .terminal-toggle {
   margin-top: 18px;
+  display: none; /* hide legacy terminal toggle button; controlled via the UI mode button */
 }
 
 .terminal-hint {
@@ -384,6 +464,40 @@ h2 {
   padding: 10px 14px;
   cursor: pointer;
   font-family: 'IBM Plex Mono', monospace;
+}
+
+/* UI / Developer mode toggle button shown in the globalStatus area */
+.status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(20,22,24,0.98), rgba(14,16,18,0.98));
+  color: #e6fff6;
+  border: 0; /* button has its own solid background now */
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5) inset, 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.status-toggle .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber);
+}
+
+.status-toggle[aria-pressed="true"] {
+  background: linear-gradient(90deg, rgba(6,30,18,0.98), rgba(10,20,14,0.98));
+  box-shadow: 0 8px 28px rgba(2,8,6,0.6) inset;
+}
+
+.status-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34,197,94,0.18);
 }
 
 .terminal {

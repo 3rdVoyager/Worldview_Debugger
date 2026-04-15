@@ -2,9 +2,11 @@ const WORLDVIEW_DATA = {
   secularism: {
     name: 'Secularism',
     status: 'High Risk',
-    infectionLevel: 'High',
+    risk: 'High',
+    damage_percentage: 72,
+    threats: [],
     disciplines: {
-      Theology: 'God is treated as private preference rather than public truth.',
+      Theology: 'Atheism',
       Philosophy: 'Reason is detached from any transcendent ground for objective truth.',
       Ethics: 'Moral norms are negotiated by consensus and utility.',
       Biology: 'Human life is reduced to advanced material processes only.',
@@ -37,7 +39,9 @@ const WORLDVIEW_DATA = {
   marxism: {
     name: 'Marxism',
     status: 'Active Corruption',
-    infectionLevel: 'Severe',
+    risk: 'Severe',
+    damage_percentage: 84,
+    threats: [],
     disciplines: {
       Theology: 'Religion is recast as ideology that masks class power.',
       Philosophy: 'Dialectical materialism is treated as the final explanatory framework.',
@@ -72,7 +76,9 @@ const WORLDVIEW_DATA = {
   postmodernism: {
     name: 'Postmodernism',
     status: 'High Instability',
-    infectionLevel: 'Moderate',
+    risk: 'Moderate',
+    damage_percentage: 55,
+    threats: [],
     disciplines: {
       Theology: 'All theological claims are treated as community constructions.',
       Philosophy: 'Certainty is rejected and metanarratives are deconstructed.',
@@ -107,7 +113,9 @@ const WORLDVIEW_DATA = {
   newSpirituality: {
     name: 'New Spirituality',
     status: 'Cloud System Overload',
-    infectionLevel: 'Moderate',
+    risk: 'Moderate',
+    damage_percentage: 48,
+    threats: [],
     disciplines: {
       Theology: 'The divine is personalized into flexible spiritual energy.',
       Philosophy: 'Contradictory truth claims are blended without hard evaluation.',
@@ -142,7 +150,9 @@ const WORLDVIEW_DATA = {
   islam: {
     name: 'Islam',
     status: 'Doctrinal Tension',
-    infectionLevel: 'High',
+    risk: 'High',
+    damage_percentage: 63,
+    threats: [],
     disciplines: {
       Theology: 'God is one, yet the Trinity and incarnation are denied.',
       Philosophy: 'Revelation is prioritized, but assurance of atonement remains unresolved.',
@@ -187,7 +197,6 @@ const bugList = document.getElementById('bugList');
 const consoleOutput = document.getElementById('consoleOutput');
 const consoleBox = document.getElementById('consoleBox');
 const globalStatus = document.getElementById('globalStatus');
-const terminalToggle = document.getElementById('terminalToggle');
 const terminalPanel = document.getElementById('terminalPanel');
 const terminalOutput = document.getElementById('terminalOutput');
 const terminalInput = document.getElementById('terminalInput');
@@ -196,6 +205,7 @@ const worldviewKeys = Object.keys(WORLDVIEW_DATA);
 let activeKey = worldviewKeys[0];
 let patchApplied = false;
 let analyzeTimer = null;
+let uiMode = 'ui'; // 'ui' = full interface, 'dev' = terminal-only
 
 function escapeHtml(value) {
   return value
@@ -212,9 +222,14 @@ function renderWorldviewSelector() {
     return `
       <li>
         <button class="worldview-item ${key === activeKey ? 'active' : ''}" data-key="${key}" aria-pressed="${key === activeKey}">
-          <span class="worldview-name">${worldview.name}</span>
-          <span class="worldview-meta">${worldview.status} · ${worldview.infectionLevel} infection</span>
-        </button>
+              <span class="worldview-name">${worldview.name}</span>
+              <div class="worldview-badges">
+                <span class="bubble bubble-risk">Risk: ${escapeHtml(String(worldview.risk || ''))}</span>
+                <span class="bubble bubble-status">Status: ${escapeHtml(String(worldview.status || ''))}</span>
+                <span class="bubble bubble-damage">Damage: ${escapeHtml(String(worldview.damage_percentage || '0'))}%</span>
+                ${worldview.threats && worldview.threats.length ? worldview.threats.map((t) => `<span class="bubble bubble-threat">${escapeHtml(t)}</span>`).join('') : ''}
+              </div>
+            </button>
       </li>
     `;
   }).join('');
@@ -252,9 +267,45 @@ function updateGlobalStatus() {
     globalStatus.innerHTML = '<span class="status-dot"></span><span>System Restored</span>';
     activeStatus.textContent = 'Restored';
   } else {
-    globalStatus.innerHTML = '<span class="status-dot"></span><span>Diagnostic Mode</span>';
+    // show a clickable UI mode toggle that switches between UI and Developer (terminal-only) modes
+    const label = uiMode === 'ui' ? 'Developer Mode':'User Interface Mode';
+    globalStatus.innerHTML = `<button id="uiModeToggle" class="status-toggle" aria-pressed="${uiMode === 'dev'}"><span class="status-dot"></span><span>${label}</span></button>`;
     activeStatus.textContent = WORLDVIEW_DATA[activeKey].status;
+
+    // wire the button (if present) to toggle the terminal panel
+    const uiBtn = document.getElementById('uiModeToggle');
+    if (uiBtn) {
+      uiBtn.addEventListener('click', () => {
+        // toggle mode
+        uiMode = uiMode === 'ui' ? 'dev' : 'ui';
+        applyUIMode();
+      });
+    }
   }
+}
+
+function applyUIMode() {
+  const selectorPanel = document.querySelector('.selector-panel');
+  const workspace = document.querySelector('.workspace');
+  if (uiMode === 'dev') {
+    // hide main UI, show terminal only
+    if (selectorPanel) selectorPanel.classList.add('hidden');
+    if (workspace) workspace.classList.add('hidden');
+    terminalPanel.classList.remove('hidden');
+    terminalPanel.setAttribute('aria-hidden', 'false');
+    document.getElementById('uiModeToggle')?.setAttribute('aria-pressed', 'true');
+    terminalInput.focus();
+  } else {
+    // show full UI, hide terminal panel
+    if (selectorPanel) selectorPanel.classList.remove('hidden');
+    if (workspace) workspace.classList.remove('hidden');
+    terminalPanel.classList.add('hidden');
+    terminalPanel.setAttribute('aria-hidden', 'true');
+    document.getElementById('uiModeToggle')?.setAttribute('aria-pressed', 'false');
+  }
+  // re-render status to update button label
+  renderWorldviewSelector();
+  updateGlobalStatus();
 }
 
 function setActiveView(key) {
@@ -323,9 +374,10 @@ function appendTerminalLine(text, kind = 'output') {
 function renderStatusTable() {
   const rows = worldviewKeys.map((key) => {
     const worldview = WORLDVIEW_DATA[key];
-    return `${worldview.name.padEnd(20)} | ${worldview.status.padEnd(22)} | ${worldview.infectionLevel}`;
+    const threats = worldview.threats ? worldview.threats.join(', ') : '';
+    return `${worldview.name.padEnd(20)} | ${String(worldview.status).padEnd(22)} | ${String(worldview.risk).padEnd(8)} | ${String(worldview.damage_percentage).padEnd(6)} | ${threats}`;
   });
-  return ['Worldview            | Status                 | Infection', '-----------------------------------------------------------', ...rows].join('\n');
+  return ['Worldview            | Status                 | Risk     | Damage | Threats', '-----------------------------------------------------------------------------------------', ...rows].join('\n');
 }
 
 function handleTerminalCommand(rawCommand) {
@@ -374,13 +426,6 @@ function initTerminal() {
     }
   });
 
-  terminalToggle.addEventListener('click', () => {
-    const hidden = terminalPanel.classList.toggle('hidden');
-    terminalPanel.setAttribute('aria-hidden', String(hidden));
-    if (!hidden) {
-      terminalInput.focus();
-    }
-  });
 }
 
 analyzeBtn.addEventListener('click', showAnalysis);

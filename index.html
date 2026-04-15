@@ -27,7 +27,7 @@
     <section class="selector-panel" aria-label="Worldview selection">
       <div class="selector-header">
         <div>
-          <p class="panel-label">Worldview Program Index</p>
+          <p class="panel-label">Worldview Program Database</p>
           <h2 class="selector-title">Choose a program to inspect</h2>
         </div>
       </div>
@@ -65,20 +65,17 @@
       </aside>
     </section>
 
-    <section class="terminal-toggle" aria-label="Hidden terminal access">
-      <button class="terminal-hint" id="terminalToggle">Hidden Terminal</button>
-      <div class="terminal hidden" id="terminalPanel" aria-hidden="true">
-        <div class="terminal-topbar">
-          <span>Command Terminal</span>
-          <span class="terminal-microcopy">Type help for commands</span>
-        </div>
-        <div class="terminal-output" id="terminalOutput"></div>
-        <label class="terminal-input-row">
-          <span>&gt;</span>
-          <input id="terminalInput" type="text" autocomplete="off" placeholder="Enter command..." />
-        </label>
+    <div class="terminal hidden" id="terminalPanel" aria-hidden="true">
+      <div class="terminal-topbar">
+        <span>Command Terminal</span>
+        <span class="terminal-microcopy">Type help for commands</span>
       </div>
-    </section>
+      <div class="terminal-output" id="terminalOutput"></div>
+      <label class="terminal-input-row">
+        <span>&gt;</span>
+        <input id="terminalInput" type="text" autocomplete="off" placeholder="Enter command..." />
+      </label>
+    </div>
   </main>
 
   <script src="script.js"></script>
