@@ -7,15 +7,15 @@ const WORLDVIEW_DATA = {
     threats: [],
     disciplines: {
       Theology: 'Atheism',
-      Philosophy: 'Reason is detached from any transcendent ground for objective truth.',
-      Ethics: 'Moral norms are negotiated by consensus and utility.',
-      Biology: 'Human life is reduced to advanced material processes only.',
-      Psychology: 'Identity is framed as self-authored without spiritual accountability.',
-      Sociology: 'Institutions are valued mainly for social efficiency and stability.',
-      Law: 'Law is grounded in procedural rights more than divine justice.',
-      Politics: 'Authority is justified by popular will and pragmatic outcomes.',
-      Economics: 'Markets and consumption are treated as primary engines of meaning.',
-      History: 'History is interpreted as progress without providential direction.'
+      Philosophy: 'Materialism & Naturalism',
+      Ethics: 'Moral Relativism or Utilitarianism',
+      Biology: 'Neo-Darwinism',
+      Psychology: 'Mind/Body Monism (Self-Actualization)',
+      Sociology: 'Personal Autonomy',
+      Law: 'Legal Positivism',
+      Politics: 'Progressivism',
+      Economics: 'Economic Interventionism',
+      History: 'Social Progress'
     },
     bugs: [
       'Borrows moral language from a worldview that has no transcendent moral source.',
@@ -43,16 +43,16 @@ const WORLDVIEW_DATA = {
     damage_percentage: 84,
     threats: [],
     disciplines: {
-      Theology: 'Religion is recast as ideology that masks class power.',
-      Philosophy: 'Dialectical materialism is treated as the final explanatory framework.',
-      Ethics: 'Morality is subordinated to class struggle and revolutionary outcomes.',
-      Biology: 'Human nature is viewed as primarily shaped by material conditions.',
-      Psychology: 'Consciousness is interpreted as a byproduct of economic structures.',
-      Sociology: 'All institutions are analyzed through oppressor-oppressed dynamics.',
-      Law: 'Law is seen mainly as an instrument of ruling-class control.',
-      Politics: 'Power transfer through revolution is prioritized over reform.',
-      Economics: 'Centralized ownership is treated as the cure for injustice.',
-      History: 'History is framed as inevitable class conflict toward utopia.'
+      Theology: 'Atheism',
+      Philosophy: 'Dialectical Materialism',
+      Ethics: 'Proletariat Morality',
+      Biology: 'Punctuated Equilibrium',
+      Psychology: 'Mind/Body Monism (Classical Conditioning)',
+      Sociology: 'Proletariat Society',
+      Law: 'Proletariat Law',
+      Politics: 'Statism',
+      Economics: 'Socialism',
+      History: 'Historical Materialism'
     },
     bugs: [
       'Claims to reveal objective truth while reducing all truth claims to class interests.',
@@ -80,16 +80,16 @@ const WORLDVIEW_DATA = {
     damage_percentage: 55,
     threats: [],
     disciplines: {
-      Theology: 'All theological claims are treated as community constructions.',
-      Philosophy: 'Certainty is rejected and metanarratives are deconstructed.',
-      Ethics: 'Moral language is often reduced to preference and power location.',
-      Biology: 'Embodied realities are interpreted through fluid identity frameworks.',
-      Psychology: 'Selfhood is fragmented across narratives and social scripts.',
-      Sociology: 'Social analysis centers on discourse, power, and identity blocs.',
-      Law: 'Legal reasoning is viewed as contingent negotiation among groups.',
-      Politics: 'Political legitimacy shifts with narrative coalitions and critique.',
-      Economics: 'Economic structures are interpreted mainly as power narratives.',
-      History: 'History is treated as competing stories without final coherence.'
+      Theology: 'Theological Suspicion',
+      Philosophy: 'Anti-Realism',
+      Ethics: 'Cultural Relativism',
+      Biology: 'Anti-Essentialism',
+      Psychology: 'Decentered Self',
+      Sociology: 'Social Constructionism',
+      Law: 'Critical Legal Studies',
+      Politics: 'Political Pessimism or Liberalism',
+      Economics: 'Economic Interventionism',
+      History: 'Historical Revisionism'
     },
     bugs: [
       'If all truth is relative, that claim itself cannot be universal.',
@@ -117,16 +117,16 @@ const WORLDVIEW_DATA = {
     damage_percentage: 48,
     threats: [],
     disciplines: {
-      Theology: 'The divine is personalized into flexible spiritual energy.',
-      Philosophy: 'Contradictory truth claims are blended without hard evaluation.',
-      Ethics: 'Authenticity is prioritized over objective moral accountability.',
-      Biology: 'Physical limits are often reframed as lower spiritual vibration.',
-      Psychology: 'Inner experience is treated as the highest authority for truth.',
-      Sociology: 'Community is optional and often replaced by curated spirituality.',
-      Law: 'Moral boundaries are viewed as restrictive to personal awakening.',
-      Politics: 'Public ethics are minimized in favor of private transformation.',
-      Economics: 'Spirituality is frequently commodified through practices and products.',
-      History: 'Traditions are mined selectively with little historical accountability.'
+      Theology: 'Pantheism',
+      Philosophy: 'Spiritual Monism',
+      Ethics: 'Karma',
+      Biology: 'Spiritual Evolution',
+      Psychology: 'Mind/Body Monism (Fourth Force)',
+      Sociology: 'Collective Consciousness',
+      Law: 'Self-Law',
+      Politics: 'Autarchy',
+      Economics: 'Universal Enlightened Production',
+      History: 'Evolutionary Godhood'
     },
     bugs: [
       'Treats inner feeling as a reliable guide without testing whether desires are truthful.',
@@ -154,16 +154,16 @@ const WORLDVIEW_DATA = {
     damage_percentage: 63,
     threats: [],
     disciplines: {
-      Theology: 'God is one, yet the Trinity and incarnation are denied.',
-      Philosophy: 'Revelation is prioritized, but assurance of atonement remains unresolved.',
-      Ethics: 'Obedience is central, yet grace and transformed sonship are unclear.',
-      Biology: 'Human nature is accountable to God but not healed through union with Christ.',
-      Psychology: 'Assurance is often fragile because final standing depends on weighing deeds.',
-      Sociology: 'Community identity is strong, but gospel reconciliation is absent.',
-      Law: 'Divine law is central, yet the cross as fulfillment of justice is rejected.',
-      Politics: 'Religion and governance intertwine without a robust church-state distinction.',
-      Economics: 'Economic ethics are present, but redemption logic is not Christ-centered.',
-      History: 'Jesus is honored prophetically while crucifixion-resurrection claims are denied.'
+      Theology: 'Monotheism',
+      Philosophy: 'Dualism',
+      Ethics: 'Divine Command Theory',
+      Biology: 'Special Creation',
+      Psychology: 'Mind/Body Dualism (Unfallen)',
+      Sociology: 'Ummah',
+      Law: 'Shariah Law',
+      Politics: 'Islamic Theocracy',
+      Economics: 'Shariah Economics',
+      History: 'Pan-Islam'
     },
     bugs: [
       'Affirms divine transcendence but offers no fully personal, relational God as eternally triune love.',
@@ -183,7 +183,8 @@ const WORLDVIEW_DATA = {
       Economics: 'Generosity and justice flow from grace and stewardship before God.',
       History: 'The gospel stands on historical crucifixion and resurrection, not symbolic myth.'
     }
-  }
+  },
+  
 };
 
 const worldviewList = document.getElementById('worldviewList');
