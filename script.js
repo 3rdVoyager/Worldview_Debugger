@@ -787,33 +787,40 @@ async function runQuickScan() {
 
   // summarized dialog: count up to total corrupted entries with jumps and bursts
   const total = demo.length;
-  // update the compact inline counter in the header
-  counter.innerHTML = `<div class="count-wrap"><span id="scanCountInline">0</span>/<span class="scanTotal">${total}</span></div>`;
+  // update the compact inline counter in the header: show remaining/totalCanonical
+  const canonicalTotal = (DEMO_SCAN_ITEMS && DEMO_SCAN_ITEMS.length) || total;
+  counter.innerHTML = `<div class="count-wrap"><span id="scanCountInline">0</span>/<span class="scanTotal">${canonicalTotal}</span></div>`;
   // show a compact summary to the right of the button while the full grid is appended below
   summary.innerHTML = `
     <div class="scan-dialog compact" role="status" aria-live="polite">
-      <div class="scan-dialog-title">Corrupted entries found</div>
+      <div class="scan-dialog-title">Corrupted entries</div>
     </div>
   `;
+  // note: countEl shows remaining corrupted entries; updates on fixes will decrement it
   const countEl = document.getElementById('scanCountInline');
+  // animate count from 0 to the total (bursty increments)
   if (countEl) {
-    // Perform bursty increments: small fast ticks inside a burst, then a short pause to create jumps
-    let current = 0;
-    const maxBurst = Math.max(1, Math.ceil(total * 0.25)); // up to ~25% per burst
-    while (current < total) {
-      const remaining = total - current;
-      const burst = Math.min(remaining, 1 + Math.floor(Math.random() * maxBurst));
-      // quick intra-burst ticks
-      for (let b = 0; b < burst; b++) {
+    (async () => {
+      let current = 0;
+      const target = total;
+      const maxBurst = Math.max(1, Math.ceil(target * 0.25));
+      while (current < target) {
+        const remainingInLoop = target - current;
+        const burst = Math.min(remainingInLoop, 1 + Math.floor(Math.random() * maxBurst));
+        for (let b = 0; b < burst; b++) {
+          // small intra-burst pause
+          // eslint-disable-next-line no-await-in-loop
+          await new Promise(r => setTimeout(r, 20 + Math.floor(Math.random() * 50)));
+          current += 1;
+          countEl.textContent = String(current);
+        }
+        // pause between bursts
         // eslint-disable-next-line no-await-in-loop
-        await new Promise((r) => setTimeout(r, 30 + Math.floor(Math.random() * 40))); // 30-70ms
-        current += 1;
-        countEl.textContent = String(current);
+        await new Promise(r => setTimeout(r, 100 + Math.floor(Math.random() * 240)));
       }
-      // pause between bursts to create a visible jump
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => setTimeout(r, 140 + Math.floor(Math.random() * 260))); // 140-400ms
-    }
+      // ensure final value
+      countEl.textContent = String(target);
+    })();
   }
 
   // append the clickable bubble grid into the results area while keeping the compact summary visible
@@ -972,6 +979,28 @@ function showScanConsoleMessage(text, type = 'info') {
   const color = type === 'success' ? 'var(--green)' : (type === 'error' ? 'var(--red)' : 'var(--muted)');
   out.insertAdjacentHTML('beforeend', `<p style="color:${color}; margin-top:10px;">${escapeHtml(text)}</p>`);
   out.scrollTop = out.scrollHeight;
+}
+
+// Update the inline scan counters after a fix so header and summary reflect remaining items
+function updateQuickScanCounts() {
+  const countEl = document.getElementById('scanCountInline');
+  const totalEl = document.querySelector('.scanTotal');
+  const summary = document.getElementById('quickScanSummary');
+  const results = document.getElementById('quickScanResults');
+  // decrement visible counters if present
+  if (countEl && totalEl) {
+    const cur = Number(countEl.textContent || '0');
+    const newCur = Math.max(0, cur - 1);
+    countEl.textContent = String(newCur);
+    // if none remain, show empty summary and clear results
+    if (newCur <= 0) {
+      if (summary) summary.innerHTML = `\n        <div class="scan-dialog" role="status" aria-live="polite">\n          <div class="scan-dialog-title">No corrupted entries found</div>\n          <div style="margin-top:8px;color:var(--muted)">All programs already uncorrupted for this worldview.</div>\n        </div>\n      `;
+      if (results) results.innerHTML = '';
+    }
+  } else {
+    // fallback: if no inline counter, refresh Status to reflect persisted state
+    renderStatusView();
+  }
 }
 
 // toggle state
@@ -1492,6 +1521,7 @@ function handleFallacySelectionInScan(idx, chosenKey) {
     if (bubble && bubble.parentElement) bubble.remove();
     if (selectedDiscipline) setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
     showScanConsoleMessage('Success: Correct correction applied. Program uncorrupted.', 'success');
+    updateQuickScanCounts();
   } else {
     demoStates[idx] = 'failed';
     const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
@@ -1537,6 +1567,7 @@ function handleFallacySelection(idx, chosenKey) {
     // if a discipline is selected, mark it fixed as well
     if (selectedDiscipline) setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
     body.insertAdjacentHTML('beforeend', `<p style="color:var(--green); margin-top:10px;"><strong>Success:</strong> Correct correction applied. Program uncorrupted.</p>`);
+    updateQuickScanCounts();
   } else {
     demoStates[idx] = 'failed';
     const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
