@@ -445,8 +445,8 @@ h5,h6 { color: var(--green); }
 }
 
 /* Global fallacy list styling on Status page */
-.status-global-fallacies { margin-top: 18px; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.36); display:flex; flex-direction:column; gap:12px; align-items:center; justify-self: stretch; align-self: start; }
-.status-global-fallacies h3 { margin: 0; color: var(--green); }
+.status-global-fallacies { grid-area: global; margin-top: 18px; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.36); display:flex; flex-direction:column; gap:12px; align-items:stretch; justify-self: stretch; align-self: start; position:static; top:auto; width:auto; }
+.status-global-fallacies h3 { margin: 0; color: var(--green); font-size:1.05rem; }
 .status-global-fallacies .panel-label { margin: 0; color: var(--muted); font-size:0.9rem; }
 .global-scan-actions { margin-bottom: 0; }
 .global-scan-summary { display:flex; flex-direction:column; gap:10px; align-items:center; width:100%; }
@@ -490,17 +490,35 @@ h5,h6 { color: var(--green); }
 .muted { color: var(--muted); font-size: 0.95rem; }
 
 /* Status page styles */
-.status-panel { max-width: 1180px; margin: 6px auto; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items:start; }
-.status-header { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-.status-summary { margin-top:6px; color:var(--muted); font-size:0.95rem; grid-column: 1 / -1; }
-.status-worldviews { display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; margin-top:6px; grid-column: 1 / 2; }
-.status-card { padding:14px; border-radius:10px; background: rgba(0,0,0,0.14); border:1px solid rgba(255,255,255,0.03); min-height:120px; }
+.status-panel { max-width: 1180px; margin: 6px auto; padding: 14px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); display: grid; grid-template-columns: 1fr 420px; gap: 20px; align-items:start; grid-template-rows: auto auto 1fr; grid-template-areas: "header header" "summary summary" "worldviews global"; }
+.status-header { grid-area: header; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.status-summary { grid-area: summary; margin-top:6px; color:var(--muted); font-size:0.95rem; }
+.status-worldviews { grid-area: worldviews; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:18px; margin-top:6px; }
+.status-card { padding:14px; border-radius:10px; background: rgba(0,0,0,0.14); border:1px solid rgba(255,255,255,0.03); min-height:140px; display:flex; flex-direction:column; justify-content:space-between; }
 .status-card h3 { margin:0 0 6px; font-size:1.06rem; }
 .status-meta { font-size:0.9rem; color:var(--muted); margin-bottom:8px; }
-.status-discipline-list { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; }
-.status-discipline { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border:1px solid rgba(255,255,255,0.02); box-shadow: none; min-width: 140px; max-width: 1fr; }
+.status-discipline-list { margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start; }
+.status-discipline { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border:1px solid rgba(255,255,255,0.02); box-shadow: none; min-width: 120px; max-width: 260px; }
 .status-discipline .status-dot { width:12px; height:12px; border-radius:50%; display:inline-block; flex: 0 0 auto; }
-.status-discipline .sd-label { font-weight:600; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.95rem; }
+.status-discipline .sd-label { font-weight:600; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.92rem; }
+
+/* Use a responsive two-column layout for Status: content + right summary */
+@media (min-width: 1000px) {
+  .status-panel {
+    grid-template-columns: 1fr 420px;
+  }
+
+  .status-global-fallacies {
+    position: static;
+    width: auto;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 999px) {
+  .status-panel { grid-template-columns: 1fr; }
+  .status-global-fallacies { position: static; width: auto; margin-top: 12px; }
+}
 
 @media (max-width: 880px) {
   .status-discipline { min-width: 110px; }

@@ -380,10 +380,7 @@ function renderStatusView() {
   // Add a global list of general fallacious arguments at the bottom (not tied to any worldview)
     const globalArea = document.createElement('div');
     globalArea.className = 'status-global-fallacies';
-    // ensure the global area appears in the right-hand column of the status panel
-    globalArea.style.gridColumn = '2 / 3';
-    // place at the top of the right column
-    globalArea.style.gridRow = '2 / 3';
+    // the layout is handled by CSS grid areas; ensure vertical alignment starts at top
     globalArea.style.alignSelf = 'start';
     globalArea.style.width = '100%';
     globalArea.setAttribute('aria-live', 'polite');
@@ -430,36 +427,7 @@ function renderStatusView() {
 
     globalArea.appendChild(actionsRow);
 
-    // Show a compact list of remaining corrupted items (names only)
-    if (remaining > 0) {
-      const listWrap = document.createElement('div');
-      listWrap.className = 'global-scan-list';
-      listWrap.style.width = '100%';
-      listWrap.style.maxHeight = '52vh';
-      listWrap.style.overflow = 'auto';
-      listWrap.style.marginTop = '10px';
-      listWrap.innerHTML = `<div style="font-weight:700;color:var(--muted);margin-bottom:8px;">Sample corrupted entries</div>`;
-      const ul = document.createElement('div');
-      ul.style.display = 'grid';
-      ul.style.gridTemplateColumns = '1fr 1fr';
-      ul.style.gap = '8px';
-      const scanStates2 = loadScanStates();
-      DEMO_SCAN_ITEMS.forEach(it => {
-        const label = stripFallacyLabel(it.text).trim();
-        if (scanStates2[label] !== 'fixed') {
-          const item = document.createElement('div');
-          item.className = 'global-scan-item';
-          item.style.padding = '8px 10px';
-          item.style.borderRadius = '8px';
-          item.style.background = 'rgba(255,255,255,0.02)';
-          item.style.border = '1px solid rgba(255,255,255,0.02)';
-          item.textContent = label.length > 80 ? label.slice(0, 76) + '…' : label;
-          ul.appendChild(item);
-        }
-      });
-      listWrap.appendChild(ul);
-      globalArea.appendChild(listWrap);
-    }
+    // Only show totals and actions in the Status-right dialog. Detailed lists are available on the Scan tab.
 
     container.parentNode.appendChild(globalArea);
   // wire refresh button
@@ -1015,6 +983,18 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+// Convert a plain fallacy name into a terminal-style filename identifier
+function toTerminalName(name) {
+  if (!name) return '';
+  // lower-case, replace non-alphanumeric with underscore
+  const base = String(name).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  // Pick a file extension deterministically from the name
+  const exts = ['.exe', '.pkg', '.sys', '.bin'];
+  let hash = 0; for (let i = 0; i < base.length; i++) { hash = ((hash << 5) - hash) + base.charCodeAt(i); hash |= 0; }
+  const ext = exts[Math.abs(hash) % exts.length];
+  return base + ext;
+}
+
 // Remove any leading fallacy label like "Strawman: ..." so the bubble text doesn't reveal the answer
 function stripFallacyLabel(text) {
   if (!text) return '';
@@ -1467,7 +1447,12 @@ function openFallacyConsole(idx) {
   const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
   // randomize option order to avoid guess-by-position
   shuffleArray(options);
-  body.innerHTML = `<p>${escapeHtml(stripFallacyLabel(item.text))}</p><div class="console-options">${options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div><div style="margin-top:12px"><button id="fallacyCancelBtn" class="btn btn-ghost">Cancel</button></div>`;
+  // Render options according to plain/terminal language mode
+  body.innerHTML = `<p>${escapeHtml(stripFallacyLabel(item.text))}</p><div class="console-options">${options.map(o => {
+    const dataKey = escapeHtml(o);
+    const display = plainEnglishMode ? escapeHtml(o) : escapeHtml(toTerminalName(o));
+    return `<button class="console-option" data-key="${dataKey}">${display}</button>`;
+  }).join('')}</div><div style="margin-top:12px"><button id="fallacyCancelBtn" class="btn btn-ghost">Cancel</button></div>`;
   modal.classList.remove('hidden');
   // wire option buttons
   body.querySelectorAll('.console-option').forEach(b => b.addEventListener('click', () => handleFallacySelection(idx, b.dataset.key)));
@@ -1491,7 +1476,12 @@ function openFallacyInScan(idx) {
   const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
   // randomize option order so correct answer isn't always in same position
   shuffleArray(options);
-  opts.innerHTML = options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('');
+  // Render options with plain or terminal labels, but keep data-key as the canonical plain name
+  opts.innerHTML = options.map(o => {
+    const dataKey = escapeHtml(o);
+    const label = plainEnglishMode ? escapeHtml(o) : escapeHtml(toTerminalName(o));
+    return `<button class="console-option" data-key="${dataKey}">${label}</button>`;
+  }).join('');
   // wire the option buttons to the scan handler
   opts.querySelectorAll('.console-option').forEach(b => b.addEventListener('click', () => handleFallacySelectionInScan(idx, b.dataset.key)));
   // bring focus to the console
