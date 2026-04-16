@@ -200,7 +200,7 @@ const WORLDVIEW_DATA = {
   islam: {
     name: 'Islam',
     description: `A rigid, Closed-Source Architecture that requires 100% manual data entry with zero room for 'Grace' exceptions. The program keeps the user in a perpetual 'Request Pending' state, as the Server (God) never sends back an 'Access Granted' (Assurance) packet. It relies on a 'Performance-Based Ping' that never reaches the required threshold for a secure handshake, leaving the connection status as 'Indeterminate' until the system shuts down.`,
-    status: 'INTERNAL_SERVER_ERROR',
+    status: 'INCORRECT_ADMIN_LOGIN',
     risk: 'Critical',
     damage_percentage: 25,
     threats: [],
@@ -279,6 +279,10 @@ function showTab(tabName, tabElement) {
   // restore quick scan button when leaving scan
   const quickBtnElem = document.getElementById('quickScanBtn');
   if (tabName !== 'scan' && quickBtnElem) quickBtnElem.classList.remove('hidden');
+  // clear inline counter when leaving Scan tab
+  if (tabName !== 'scan') {
+    const sc = document.getElementById('scanCounter'); if (sc) sc.innerHTML = '';
+  }
 
   const pageHome = document.getElementById('page-home');
   const pageScan = document.getElementById('page-scan');
@@ -286,12 +290,13 @@ function showTab(tabName, tabElement) {
   const pageDebug = document.getElementById('page-debug');
 
   if (tabName === 'home') {
-    pageHome.classList.remove('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
+    pageHome.classList.remove('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden'); pageStatus.classList.add('hidden');
     const homeList = document.getElementById('homeCriticalListLarge'); if (homeList) homeList.innerHTML = '';
   } else if (tabName === 'scan') {
-    pageHome.classList.add('hidden'); pageScan.classList.remove('hidden'); pageDebug.classList.add('hidden');
+    pageHome.classList.add('hidden'); pageScan.classList.remove('hidden'); pageDebug.classList.add('hidden'); pageStatus.classList.add('hidden');
     const quickBtn = document.getElementById('quickScanBtn'); if (quickBtn) { quickBtn.removeEventListener('click', runQuickScan); quickBtn.addEventListener('click', runQuickScan); }
     const summary = document.getElementById('quickScanSummary'); if (summary) summary.innerHTML = '';
+    const results = document.getElementById('quickScanResults'); if (results) results.innerHTML = '';
     initializeScanConsole();
   } else if (tabName === 'status') {
     pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
@@ -377,17 +382,28 @@ function renderStatusView() {
     globalArea.className = 'status-global-fallacies';
     // ensure the global area appears in the right-hand column of the status panel
     globalArea.style.gridColumn = '2 / 3';
+    // place at the top of the right column
+    globalArea.style.gridRow = '2 / 3';
+    globalArea.style.alignSelf = 'start';
+    globalArea.style.width = '100%';
     globalArea.setAttribute('aria-live', 'polite');
     const scanStates = loadScanStates();
     let total = DEMO_SCAN_ITEMS.length;
     let fixed = 0;
-    DEMO_SCAN_ITEMS.forEach(it => { if (scanStates[stripFallacyLabel(it).trim()] === 'fixed') fixed++; });
+    DEMO_SCAN_ITEMS.forEach(it => { if (scanStates[stripFallacyLabel(it.text).trim()] === 'fixed') fixed++; });
     const remaining = total - fixed;
 
     const countsRow = document.createElement('div');
     countsRow.className = 'global-scan-summary';
     countsRow.innerHTML = `<div class="count-item"><strong>${remaining}</strong><div class="ci-label">corrupted</div></div><div class="count-item"><strong>${fixed}</strong><div class="ci-label">cleaned</div></div>`;
     globalArea.appendChild(countsRow);
+
+    // Add actions: Reset and Open Scan (navigate to Scan tab and run quick scan)
+    const actionsRow = document.createElement('div');
+    actionsRow.className = 'global-scan-actions';
+    actionsRow.style.display = 'flex';
+    actionsRow.style.gap = '8px';
+    actionsRow.style.marginTop = '8px';
 
     const resetBtn = document.createElement('button');
     resetBtn.className = 'btn btn-ghost';
@@ -398,7 +414,52 @@ function renderStatusView() {
         renderStatusView();
       }
     });
-    globalArea.appendChild(resetBtn);
+    actionsRow.appendChild(resetBtn);
+
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn btn-primary';
+    openBtn.textContent = 'Open Scan';
+    openBtn.addEventListener('click', () => {
+      // switch to Scan tab and run the quick scan to show details
+      const scanTab = document.querySelector('.menu-tab[data-tab="scan"]');
+      if (scanTab) showTab('scan', scanTab);
+      // allow a small delay for the DOM to reveal the Scan page
+      setTimeout(() => { try { runQuickScan(); } catch (e) { /* ignore */ } }, 120);
+    });
+    actionsRow.appendChild(openBtn);
+
+    globalArea.appendChild(actionsRow);
+
+    // Show a compact list of remaining corrupted items (names only)
+    if (remaining > 0) {
+      const listWrap = document.createElement('div');
+      listWrap.className = 'global-scan-list';
+      listWrap.style.width = '100%';
+      listWrap.style.maxHeight = '52vh';
+      listWrap.style.overflow = 'auto';
+      listWrap.style.marginTop = '10px';
+      listWrap.innerHTML = `<div style="font-weight:700;color:var(--muted);margin-bottom:8px;">Sample corrupted entries</div>`;
+      const ul = document.createElement('div');
+      ul.style.display = 'grid';
+      ul.style.gridTemplateColumns = '1fr 1fr';
+      ul.style.gap = '8px';
+      const scanStates2 = loadScanStates();
+      DEMO_SCAN_ITEMS.forEach(it => {
+        const label = stripFallacyLabel(it.text).trim();
+        if (scanStates2[label] !== 'fixed') {
+          const item = document.createElement('div');
+          item.className = 'global-scan-item';
+          item.style.padding = '8px 10px';
+          item.style.borderRadius = '8px';
+          item.style.background = 'rgba(255,255,255,0.02)';
+          item.style.border = '1px solid rgba(255,255,255,0.02)';
+          item.textContent = label.length > 80 ? label.slice(0, 76) + '…' : label;
+          ul.appendChild(item);
+        }
+      });
+      listWrap.appendChild(ul);
+      globalArea.appendChild(listWrap);
+    }
 
     container.parentNode.appendChild(globalArea);
   // wire refresh button
@@ -513,6 +574,43 @@ document.addEventListener('DOMContentLoaded', () => {
   if (backdrop) backdrop.addEventListener('click', closeDisciplineFilesModal);
   // close on ESC
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDisciplineFilesModal(); });
+});
+
+// Fallacy reference data and modal wiring
+const FALLACY_REFERENCE = [
+  { id: 'Ad Hominem', title: 'Ad Hominem', tech: 'Attacking the person’s character rather than their argument.', real: `"You only believe in the Bible because you're a closed-minded person."` },
+  { id: 'Strawman', title: 'Strawman', tech: "Misrepresenting an opponent's position to make it easier to attack.", real: `"Christians hate science because they believe the world was made in six literal days."` },
+  { id: 'False Dilemma', title: 'False Dilemma', tech: 'Acting as if only two choices exist when there are actually more.', real: `"Either God is all-powerful and can\'t stop evil, or He is good and just isn\'t powerful enough."` },
+  { id: 'Hasty Generalization', title: 'Hasty Generalization', tech: 'Making a broad claim based on a very small or unique sample size.', real: `"I knew a Christian who was a hypocrite, therefore all Christians are hypocrites."` },
+  { id: 'Genetic Fallacy', title: 'Genetic Fallacy', tech: 'Arguing that a claim is true or false based solely on where it came from.', real: `"You only believe in God because you were raised in a Christian home in America."` },
+  { id: 'Circular Reasoning', title: 'Circular Reasoning', tech: 'When the conclusion of an argument is used as one of the premises.', real: `"The Bible is true because it says it\'s the Word of God, and God wouldn\'t lie."` },
+  { id: 'Non-Sequitur', title: 'Non-Sequitur', tech: 'A conclusion that does not logically follow from the previous statement.', real: `"Religion has caused wars, therefore God does not exist."` },
+  { id: 'Self-Refuting', title: 'Self-Refuting', tech: 'A statement that makes itself false by its own standard.', real: `"There is no such thing as absolute truth."` },
+  { id: 'Equivocation', title: 'Equivocation', tech: 'Using the same word in two different ways to mislead.', real: `"Evolution is just a theory, and gravity is a theory, so they have the same level of uncertainty."` },
+  { id: 'Red Herring', title: 'Red Herring', tech: 'Introducing an irrelevant topic to divert attention from the main issue.', real: `"Why are we talking about the Resurrection? Look at all the bad things the Church did in the Crusades!"` }
+];
+
+function openFallacyReferenceModal() {
+  const modal = document.getElementById('fallacyRefModal');
+  const body = document.getElementById('fallacyRefModalBody');
+  if (!modal || !body) return;
+  body.innerHTML = FALLACY_REFERENCE.map(f => `\n    <div class="disc-bubble">\n      <h4>${escapeHtml(f.title)}</h4>\n      <p>${escapeHtml(f.tech)}</p>\n      <p style="color:var(--muted);margin-top:8px">${escapeHtml(f.real)}</p>\n    </div>\n  `).join('');
+  modal.classList.remove('hidden');
+  const closeBtn = document.getElementById('fallacyRefModalClose'); if (closeBtn) closeBtn.focus();
+}
+
+function closeFallacyReferenceModal() {
+  const modal = document.getElementById('fallacyRefModal');
+  if (!modal) return; modal.classList.add('hidden');
+}
+
+// wire fallacy reference modal controls
+document.addEventListener('DOMContentLoaded', () => {
+  const ffBtn = document.getElementById('fallacyReferenceBtn'); if (ffBtn) ffBtn.addEventListener('click', openFallacyReferenceModal);
+  const closeBtn = document.getElementById('fallacyRefModalClose'); if (closeBtn) closeBtn.addEventListener('click', closeFallacyReferenceModal);
+  const backdrop = document.getElementById('fallacyRefModalBackdrop'); if (backdrop) backdrop.addEventListener('click', closeFallacyReferenceModal);
+  // close on ESC as well
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFallacyReferenceModal(); });
 });
 
 function renderHome(targetEl) {
@@ -653,26 +751,32 @@ function renderScanView(targetEl) {
 // Quick scan simulation for the Scan page — shows demo fallacious arguments
 async function runQuickScan() {
   const btn = document.getElementById('quickScanBtn');
-  const out = document.getElementById('quickScanSummary');
-  if (!btn || !out) return;
+  const summary = document.getElementById('quickScanSummary');
+  const results = document.getElementById('quickScanResults');
+  const counter = document.getElementById('scanCounter');
+  if (!btn || !summary || !results || !counter) return;
   btn.disabled = true;
-  // hide the quick scan button once the scan starts
-  btn.classList.add('hidden');
-  out.innerHTML = `<div class="console-loading">Scanning worldview drive for fallacious arguments...</div>`;
+  // show a small loading state in the compact summary area and reset counter/results
+  summary.innerHTML = `<div class="console-loading">Scanning worldview drive for fallacious arguments...</div>`;
+  results.innerHTML = '';
+  counter.innerHTML = '';
 
   // build demo list by filtering canonical items against persisted quick-scan states
   const allDemo = DEMO_SCAN_ITEMS.slice();
-  const demo = allDemo.filter(item => !isScanItemFixed(activeKey, item.text));
+  let demo = allDemo.filter(item => !isScanItemFixed(activeKey, item.text));
+  // scramble order to avoid position-based guessing
+  demo = shuffleArray(demo);
 
   // store for modal lookup
   lastDemoList = demo;
   demoStates = {};
 
   if (!demo.length) {
-    out.innerHTML = `
+    // show zero count in header counter and a short dialog in the compact summary
+    counter.innerHTML = `<div class="count-big">0/${allDemo.length}</div>`;
+    summary.innerHTML = `
       <div class="scan-dialog" role="status" aria-live="polite">
         <div class="scan-dialog-title">No corrupted entries found</div>
-        <div class="scan-dialog-count">0/${allDemo.length}</div>
         <div style="margin-top:8px;color:var(--muted)">All programs already uncorrupted for this worldview.</div>
       </div>
     `;
@@ -683,13 +787,15 @@ async function runQuickScan() {
 
   // summarized dialog: count up to total corrupted entries with jumps and bursts
   const total = demo.length;
-  out.innerHTML = `
-    <div class="scan-dialog" role="status" aria-live="polite">
+  // update the compact inline counter in the header
+  counter.innerHTML = `<div class="count-wrap"><span id="scanCountInline">0</span>/<span class="scanTotal">${total}</span></div>`;
+  // show a compact summary to the right of the button while the full grid is appended below
+  summary.innerHTML = `
+    <div class="scan-dialog compact" role="status" aria-live="polite">
       <div class="scan-dialog-title">Corrupted entries found</div>
-      <div class="scan-dialog-count"><span id="scanCount">0</span>/${total}</div>
     </div>
   `;
-  const countEl = out.querySelector('#scanCount');
+  const countEl = document.getElementById('scanCountInline');
   if (countEl) {
     // Perform bursty increments: small fast ticks inside a burst, then a short pause to create jumps
     let current = 0;
@@ -710,7 +816,7 @@ async function runQuickScan() {
     }
   }
 
-  // append the clickable bubble grid while keeping the scan dialog visible
+  // append the clickable bubble grid into the results area while keeping the compact summary visible
   const gridHtml = `
     <div style="margin-top:12px;">
       <strong>Detected fallacious arguments</strong>
@@ -719,7 +825,7 @@ async function runQuickScan() {
       </div>
     </div>
   `;
-  out.insertAdjacentHTML('beforeend', gridHtml);
+  results.insertAdjacentHTML('beforeend', gridHtml);
 
   // wire bubble clicks to open the fallacy console modal
   const grid = document.getElementById('fallacyGrid');
@@ -732,9 +838,8 @@ async function runQuickScan() {
     });
   }
 
-  // re-enable and reveal the quick-scan button
+  // re-enable the quick-scan button (keep visible)
   btn.disabled = false;
-  btn.classList.remove('hidden');
 }
 
 // human-friendly applied patch titles for display
@@ -811,6 +916,16 @@ const DEMO_SCAN_ITEMS = [
   { text: `Equivocation: "The Bible says you should have the faith of a child, but being 'childish' is a bad trait, so Christianity encourages being a bad person."`, correct: 'Equivocation' }
 ];
 
+// Utility: in-place Fisher-Yates shuffle
+function shuffleArray(arr) {
+  if (!Array.isArray(arr)) return arr;
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+
 // Persisted quick-scan states stored per-worldview in localStorage under key 'wv_scan_states'
 function loadScanStates() {
   try {
@@ -832,19 +947,31 @@ function saveScanStates(map) {
 function markScanItemFixed(worldviewKey, itemText) {
   const map = loadScanStates();
   map[worldviewKey] = map[worldviewKey] || {};
-  map[worldviewKey][itemText] = 'fixed';
+  // Normalize key by stripping any leading fallacy label so saved keys match Status view
+  const key = stripFallacyLabel(itemText).trim();
+  map[worldviewKey][key] = 'fixed';
   saveScanStates(map);
 }
 
 function isScanItemFixed(worldviewKey, itemText) {
   const map = loadScanStates();
-  return !!(map?.[worldviewKey]?.[itemText] === 'fixed');
+  const key = stripFallacyLabel(itemText).trim();
+  return !!(map?.[worldviewKey]?.[key] === 'fixed');
 }
 
 function getRemainingScanItems(worldviewKey) {
   const all = DEMO_SCAN_ITEMS || [];
   const map = loadScanStates();
-  return all.filter(it => !(map?.[worldviewKey]?.[it.text] === 'fixed'));
+  return all.filter(it => !(map?.[worldviewKey]?.[stripFallacyLabel(it.text).trim()] === 'fixed'));
+}
+
+// show a clear message in the Scan Console area and a short transient banner
+function showScanConsoleMessage(text, type = 'info') {
+  const out = document.getElementById('scanConsoleOutput');
+  if (!out) return;
+  const color = type === 'success' ? 'var(--green)' : (type === 'error' ? 'var(--red)' : 'var(--muted)');
+  out.insertAdjacentHTML('beforeend', `<p style="color:${color}; margin-top:10px;">${escapeHtml(text)}</p>`);
+  out.scrollTop = out.scrollHeight;
 }
 
 // toggle state
@@ -1294,9 +1421,7 @@ function initializeScanConsole() {
   const opts = document.getElementById('scanConsoleOptions');
   if (!box || !out || !opts) return;
   out.innerHTML = `<p style="color:var(--muted); margin:0;">Scan Console online. Fallacy debug selection options will appear here.</p>`;
-  opts.innerHTML = `<div style="margin-top:10px"><button id="scanClearConsole" class="btn btn-ghost">Clear</button></div>`;
-  const clearBtn = document.getElementById('scanClearConsole');
-  if (clearBtn) clearBtn.addEventListener('click', () => { out.innerHTML=''; opts.innerHTML=''; });
+  opts.innerHTML = `<div style="margin-top:10px;color:var(--muted)">Select an option to diagnose.</div>`;
 }
 
 function openFallacyConsole(idx) {
@@ -1311,6 +1436,8 @@ function openFallacyConsole(idx) {
   const item = lastDemoList[idx];
   if (!item) return;
   const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
+  // randomize option order to avoid guess-by-position
+  shuffleArray(options);
   body.innerHTML = `<p>${escapeHtml(stripFallacyLabel(item.text))}</p><div class="console-options">${options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div><div style="margin-top:12px"><button id="fallacyCancelBtn" class="btn btn-ghost">Cancel</button></div>`;
   modal.classList.remove('hidden');
   // wire option buttons
@@ -1333,10 +1460,11 @@ function openFallacyInScan(idx) {
   if (!item) return;
   out.innerHTML = `<p style="white-space:pre-wrap">${escapeHtml(stripFallacyLabel(item.text))}</p>`;
   const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
-  opts.innerHTML = options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('') + `<div style="margin-top:10px"><button id="scanClearConsole" class="btn btn-ghost">Clear</button></div>`;
+  // randomize option order so correct answer isn't always in same position
+  shuffleArray(options);
+  opts.innerHTML = options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('');
   // wire the option buttons to the scan handler
   opts.querySelectorAll('.console-option').forEach(b => b.addEventListener('click', () => handleFallacySelectionInScan(idx, b.dataset.key)));
-  const clearBtn = document.getElementById('scanClearConsole'); if (clearBtn) clearBtn.addEventListener('click', () => { out.innerHTML=''; opts.innerHTML=''; });
   // bring focus to the console
   box.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -1347,7 +1475,10 @@ function handleFallacySelectionInScan(idx, chosenKey) {
   const item = lastDemoList[idx];
   if (!item || !out || !opts) return;
   const correct = item.correct;
-  if (chosenKey === correct) {
+  const chosenNorm = String(chosenKey || '').trim().toLowerCase();
+  const correctNorm = String(correct || '').trim().toLowerCase();
+  console.debug('[scan-select] idx=', idx, 'chosenKey=', chosenKey, 'correct=', correct, 'chosenNorm=', chosenNorm, 'correctNorm=', correctNorm);
+  if (chosenNorm === correctNorm) {
     demoStates[idx] = 'fixed';
     const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
     if (bubble) bubble.classList.add('fixed');
@@ -1360,12 +1491,12 @@ function handleFallacySelectionInScan(idx, chosenKey) {
     // remove the bubble from the UI (it's no longer part of future scans)
     if (bubble && bubble.parentElement) bubble.remove();
     if (selectedDiscipline) setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
-    out.insertAdjacentHTML('beforeend', `<p style="color:var(--green); margin-top:10px;"><strong>Success:</strong> Correct correction applied. Program uncorrupted.</p>`);
+    showScanConsoleMessage('Success: Correct correction applied. Program uncorrupted.', 'success');
   } else {
     demoStates[idx] = 'failed';
     const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
     if (bubble) bubble.classList.add('failed');
-    out.insertAdjacentHTML('beforeend', `<p style="color:var(--red); margin-top:10px;"><strong>Failure:</strong> Incorrect — program remains corrupted.</p>`);
+    showScanConsoleMessage('Failure: Incorrect — program remains corrupted.', 'error');
   }
   // disable options visually and show correct/wrong
   opts.querySelectorAll('.console-option').forEach((o) => {
@@ -1387,8 +1518,11 @@ function handleFallacySelection(idx, chosenKey) {
   const item = lastDemoList[idx];
   if (!item || !body) return;
   const correct = item.correct;
+  const chosenNorm = String(chosenKey || '').trim().toLowerCase();
+  const correctNorm = String(correct || '').trim().toLowerCase();
+  console.debug('[modal-select] idx=', idx, 'chosenKey=', chosenKey, 'correct=', correct, 'chosenNorm=', chosenNorm, 'correctNorm=', correctNorm);
   // mark state and update bubble appearance
-  if (chosenKey === correct) {
+  if (chosenNorm === correctNorm) {
     demoStates[idx] = 'fixed';
     const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
     if (bubble) bubble.classList.add('fixed');
@@ -1415,8 +1549,12 @@ function handleFallacySelection(idx, chosenKey) {
     if (o.dataset.key === chosenKey && o.dataset.key !== correct) o.classList.add('wrong');
     o.disabled = true;
   });
-  // auto-close modal shortly after feedback
-  setTimeout(() => { if (modal) modal.classList.add('hidden'); }, 900);
+  // auto-close modal shortly after feedback; give a bit longer for success so user sees confirmation
+  const delay = (chosenNorm === correctNorm) ? 1800 : 900;
+  setTimeout(() => { if (modal) modal.classList.add('hidden'); }, delay);
+  // also show the same feedback in the Scan Console (if present)
+  if (chosenNorm === correctNorm) showScanConsoleMessage('Success: Correct correction applied. Program uncorrupted.', 'success');
+  else showScanConsoleMessage('Failure: Incorrect — program remains corrupted.', 'error');
 }
 
 // modal close wiring (backdrop / close button / ESC)

@@ -35,6 +35,7 @@
           <div class="hero-controls relocated">
             <button id="plainToggleBtn" class="btn btn-ghost">Plain English</button>
             <button id="disciplineFilesBtn" class="btn btn-ghost">Disciplines Reference</button>
+            <button id="fallacyReferenceBtn" class="btn btn-ghost">Fallacy Reference</button>
             <button id="resetSessionBtn" class="btn btn-ghost">Reboot OS</button>
           </div>
         </div>
@@ -84,11 +85,19 @@
 
     <!-- Keep the Scan page as a compact action area for quick scans (separate from the detailed Status page) -->
     <div id="page-scan" class="page hidden">
-      <section class="scan-hero" style="display:flex; gap:16px; align-items:flex-start;">
-        <div style="flex:1;">
-          <h2>Scan Worldview Drive</h2>
-          <div class="home-actions"><button id="quickScanBtn" class="btn btn-primary">Run Quick Scan</button></div>
-          <div id="quickScanSummary" style="margin-top:12px;"></div>
+      <section class="scan-hero">
+        <div class="scan-main">
+          <div class="scan-header">
+            <h2>Scan Worldview Drive</h2>
+            <div class="scan-controls">
+              <div class="scan-left">
+                <button id="quickScanBtn" class="btn btn-primary">Run Quick Scan</button>
+                <div id="scanCounter" class="scan-counter" aria-live="polite"></div>
+              </div>
+              <div id="quickScanSummary" class="quick-scan-summary"></div>
+            </div>
+          </div>
+          <div id="quickScanResults" class="quick-scan-results" style="margin-top:12px;"></div>
         </div>
 
         <aside class="console-panel" id="scanConsolePanel" style="width:420px;">
@@ -173,6 +182,16 @@
       <button class="modal-close" id="fallacyModalClose" aria-label="Close">×</button>
       <h2 id="fallacyModalTitle">Correction Programs — Select the matching fallacy</h2>
       <div id="fallacyModalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Fallacy reference modal (static reference content) -->
+  <div id="fallacyRefModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="fallacyRefModalTitle">
+    <div class="modal-backdrop" id="fallacyRefModalBackdrop"></div>
+    <div class="modal-content" role="document">
+      <button class="modal-close" id="fallacyRefModalClose" aria-label="Close">×</button>
+      <h2 id="fallacyRefModalTitle">Fallacy Reference</h2>
+      <div id="fallacyRefModalBody" class="modal-body"></div>
     </div>
   </div>
   <script src="script.js"></script>
