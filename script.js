@@ -271,51 +271,248 @@ let analyzeTimer = null;
 // developer/terminal mode removed
 let selectedDiscipline = null; // currently-selected discipline label
 
-// wire top menu tabs
-document.addEventListener('DOMContentLoaded', () => {
+// wire top menu tabs using event delegation and a centralized tab switcher
+function showTab(tabName, tabElement) {
   const tabs = document.querySelectorAll('.menu-tab');
-  tabs.forEach(tab => tab.addEventListener('click', (e) => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const tabName = tab.dataset.tab;
-    // show/hide full-page panels per tab
-    const pageHome = document.getElementById('page-home');
-    const pageScan = document.getElementById('page-scan');
-    const pageStatus = document.getElementById('page-status');
-    const pageDebug = document.getElementById('page-debug');
-    if (tabName === 'home') {
-      pageHome.classList.remove('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
-      // render interactive home area
-      const btnLarge = document.getElementById('homeDebugBtnLarge');
-      if (btnLarge) btnLarge.addEventListener('click', () => showCriticalFiles(activeKey));
-      // also populate the smaller home area
-      const homeList = document.getElementById('homeCriticalListLarge');
-      if (homeList) homeList.innerHTML = '';
-    } else if (tabName === 'scan') {
-      // lightweight quick-scan page
-      pageHome.classList.add('hidden'); pageScan.classList.remove('hidden'); pageDebug.classList.add('hidden');
-      const quickBtn = document.getElementById('quickScanBtn');
-      if (quickBtn) quickBtn.addEventListener('click', runQuickScan);
-      const summary = document.getElementById('quickScanSummary'); if (summary) summary.innerHTML = '';
-    } else if (tabName === 'status') {
-      // Status tab left intentionally blank for now
-      pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
-      if (pageStatus) pageStatus.classList.remove('hidden');
-    } else if (tabName === 'debug') {
-      // Debug tab shows the full selector/workspace/console UI
-      pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageStatus.classList.add('hidden');
-      if (pageDebug) pageDebug.classList.remove('hidden');
-      renderWorldviewSelector(); setActiveView(activeKey);
-      const consoleOut = document.getElementById('consoleOutput');
-      if (consoleOut) renderScanView(consoleOut);
-    }
-  }));
-  // ensure the currently-marked active tab initializes on page load
-  const activeTab = document.querySelector('.menu-tab.active');
-  if (activeTab) {
-    // call its click handler to render the appropriate page
-    activeTab.click();
+  tabs.forEach(t => t.classList.toggle('active', t === tabElement));
+
+  // restore quick scan button when leaving scan
+  const quickBtnElem = document.getElementById('quickScanBtn');
+  if (tabName !== 'scan' && quickBtnElem) quickBtnElem.classList.remove('hidden');
+
+  const pageHome = document.getElementById('page-home');
+  const pageScan = document.getElementById('page-scan');
+  const pageStatus = document.getElementById('page-status');
+  const pageDebug = document.getElementById('page-debug');
+
+  if (tabName === 'home') {
+    pageHome.classList.remove('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
+    const homeList = document.getElementById('homeCriticalListLarge'); if (homeList) homeList.innerHTML = '';
+  } else if (tabName === 'scan') {
+    pageHome.classList.add('hidden'); pageScan.classList.remove('hidden'); pageDebug.classList.add('hidden');
+    const quickBtn = document.getElementById('quickScanBtn'); if (quickBtn) { quickBtn.removeEventListener('click', runQuickScan); quickBtn.addEventListener('click', runQuickScan); }
+    const summary = document.getElementById('quickScanSummary'); if (summary) summary.innerHTML = '';
+    initializeScanConsole();
+  } else if (tabName === 'status') {
+    pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
+    if (pageStatus) pageStatus.classList.remove('hidden'); renderStatusView();
+  } else if (tabName === 'debug') {
+    pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageStatus.classList.add('hidden');
+    if (pageDebug) pageDebug.classList.remove('hidden'); renderWorldviewSelector(); setActiveView(activeKey);
   }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const menu = document.querySelector('.top-menu');
+  if (menu) {
+    menu.addEventListener('click', (e) => {
+      const tab = e.target.closest('.menu-tab');
+      if (!tab) return;
+      const tabName = tab.dataset.tab;
+      showTab(tabName, tab);
+    });
+  }
+
+  // Also add direct listeners to each tab (click + keyboard) to ensure switching works
+  const tabEls = document.querySelectorAll('.menu-tab');
+  tabEls.forEach((tab) => {
+    tab.addEventListener('click', (e) => {
+      const name = tab.dataset.tab;
+      showTab(name, tab);
+    });
+    tab.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const name = tab.dataset.tab;
+        showTab(name, tab);
+      }
+    });
+  });
+
+  // initialize the active tab
+  const activeTab = document.querySelector('.menu-tab.active');
+  if (activeTab) showTab(activeTab.dataset.tab, activeTab);
+});
+
+// Render the debugging status page summary
+function renderStatusView() {
+  const container = document.getElementById('statusWorldviews');
+  const summary = document.getElementById('statusSummary');
+  if (!container) return;
+  const map = loadDisciplineStatus();
+  const keys = Object.keys(WORLDVIEW_DATA);
+  // summary: total worldviews and total fixed disciplines
+  let totalWorldviews = keys.length;
+  let totalDisciplines = 0;
+  let totalFixed = 0;
+  const cards = keys.map((k) => {
+    const w = WORLDVIEW_DATA[k];
+    const disciplines = Object.keys(w.disciplines || {});
+    totalDisciplines += disciplines.length;
+    let fixed = 0, partial = 0, unfixed = 0;
+    const chips = disciplines.map((d) => {
+      const s = map?.[k]?.[d] || 'unfixed';
+      if (s === 'fixed') fixed += 1;
+      else if (s === 'partial') partial += 1;
+      else unfixed += 1;
+      // show only colored dot + label (no textual "fixed"/"unfixed")
+      return `<div class="status-discipline"><span class="status-dot ${s}" aria-hidden="true"></span><span class="sd-label">${escapeHtml(d)}</span></div>`;
+    }).join('');
+    totalFixed += fixed;
+    const percent = disciplines.length ? Math.round((fixed / disciplines.length) * 100) : 0;
+    return `
+      <div class="status-card">
+        <h3>${escapeHtml(w.name)}</h3>
+        <div class="status-meta">${fixed}/${disciplines.length} fixed — ${percent}%</div>
+        <div class="status-discipline-list">${chips}</div>
+      </div>
+    `;
+  }).join('');
+  summary.textContent = `Worldviews: ${totalWorldviews} • Disciplines: ${totalDisciplines} • Fixed: ${totalFixed}`;
+  container.innerHTML = cards;
+  // Remove any existing global fallacies panel to avoid duplicates
+  document.querySelectorAll('.status-global-fallacies').forEach(el => el.remove());
+  // Add a global list of general fallacious arguments at the bottom (not tied to any worldview)
+    const globalArea = document.createElement('div');
+    globalArea.className = 'status-global-fallacies';
+    // ensure the global area appears in the right-hand column of the status panel
+    globalArea.style.gridColumn = '2 / 3';
+    globalArea.setAttribute('aria-live', 'polite');
+    const scanStates = loadScanStates();
+    let total = DEMO_SCAN_ITEMS.length;
+    let fixed = 0;
+    DEMO_SCAN_ITEMS.forEach(it => { if (scanStates[stripFallacyLabel(it).trim()] === 'fixed') fixed++; });
+    const remaining = total - fixed;
+
+    const countsRow = document.createElement('div');
+    countsRow.className = 'global-scan-summary';
+    countsRow.innerHTML = `<div class="count-item"><strong>${remaining}</strong><div class="ci-label">corrupted</div></div><div class="count-item"><strong>${fixed}</strong><div class="ci-label">cleaned</div></div>`;
+    globalArea.appendChild(countsRow);
+
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-ghost';
+    resetBtn.textContent = 'Reset Quick-Scan Flags';
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Reset all quick-scan flags?')) {
+        saveScanStates({});
+        renderStatusView();
+      }
+    });
+    globalArea.appendChild(resetBtn);
+
+    container.parentNode.appendChild(globalArea);
+  // wire refresh button
+  const refresh = document.getElementById('statusRefreshBtn');
+  if (refresh) refresh.addEventListener('click', renderStatusView);
+}
+
+// Discipline file references content (displayed in modal)
+const DISCIPLINE_FILES = [
+  {
+    id: 'Theology',
+    title: 'Theology: [The Root Directory]',
+    simpleTitle: 'Theology (Foundations of Belief)',
+    tech: 'The system’s BIOS/Kernel. It defines the most fundamental parameters of the entire environment. Every other application relies on the "God-Statement" at the center of this directory. If the Root Directory is corrupted, every sub-routine (like Morality or Purpose) will eventually return a system_failure.',
+    real: 'This is the foundation of a worldview. It asks the ultimate question: Is there a God, and if so, what is He like? It examines the nature of the divine, the existence of the supernatural, and how a Creator relates to His creation.'
+  },
+  {
+    id: 'Philosophy',
+    title: 'Philosophy: [The Logic Gate / Compiler]',
+    simpleTitle: 'Philosophy (Reason & Logic)',
+    tech: 'The Logic Engine that determines how data is processed. It sets the rules for what is considered "True" or "Rational." It acts as the system\'s compiler, translating raw observations into meaningful information. A bug here results in "Infinite Loops" or "Self-Refuting Logic."',
+    real: 'Philosophy is the "thinking about thinking." It deals with logic, reason, and how we know what is true. It seeks to answer big-picture questions about the nature of existence, the mind, and the validity of our arguments.'
+  },
+  {
+    id: 'Biology',
+    title: 'Biology: [The Hardware Specifications]',
+    simpleTitle: 'Biology (Life & Design)',
+    tech: 'The Physical Architecture and Hardware Specs of the system. It monitors the "Bio-Code" (DNA) and the origin of the device itself. A worldview that misreads the Biology module often attempts to run "Software" (Consciousness/Soul) on "Hardware" that it claims is just random, unprogrammed material.',
+    real: 'This discipline focuses on the origin, growth, and structure of living organisms. In a worldview context, it asks whether life is a product of blind, material forces or the result of an intentional, intelligent design.'
+  },
+  {
+    id: 'Psychology',
+    title: 'Psychology: [The User Interface (UI)]',
+    simpleTitle: 'Psychology (Mind & Behavior)',
+    tech: 'The study of the Internal User Experience. This module manages "Cognitive Processing," "Emotional Buffering," and "Identity Profiles." It seeks to understand why the "Human User" experiences "Glitches" (Guilt, Anxiety, or Brokenness) and how to restore the user to factory settings.',
+    real: 'Psychology explores the human "inner self"—our thoughts, emotions, and behaviors. It looks at the cause of human brokenness (mental or spiritual) and seeks to understand what leads to true mental health and peace.'
+  },
+  {
+    id: 'Sociology',
+    title: 'Sociology: [The Network Protocol]',
+    simpleTitle: 'Sociology (Community & Society)',
+    tech: 'The Network Connectivity Layer. It defines how multiple "Individual Units" interact and form "Clusters" (Societies). It manages the "Social Bandwidth" and "Shared Protocols" that keep the network from crashing due to "Class Conflicts" or "Systemic Lag."',
+    real: 'This field examines how people live together in groups, families, and communities. It looks at the "social glue" that holds us together and investigates how a worldview’s beliefs translate into the way we treat our neighbors.'
+  },
+  {
+    id: 'Ethics',
+    title: 'Ethics: [The Firewall / Security Policy]',
+    simpleTitle: 'Ethics (Right & Wrong)',
+    tech: 'The Global Security Policy. It determines what actions are "Authorized" or "Forbidden" within the system. Without a solid Ethics module, the system has no "Firewall" against destructive behaviors, leading to "Moral Data Corruption."',
+    real: 'Ethics is the study of moral conduct. It asks if there is an objective standard for "good" and "evil" that applies to everyone, or if morality is just a personal preference or a social convenience.'
+  },
+  {
+    id: 'History',
+    title: 'History: [The System Logs]',
+    simpleTitle: 'History (The Record of Events)',
+    tech: 'The Immutable Ledger or Audit Trail of the system. It records every event, decision, and "Version Update" the world has ever seen. Analyzing History allows the debugger to see where previous worldviews "Crashed" and what "Patches" were applied to save the system.',
+    real: 'History is the record of human events. It is the story of where we came from. It helps us see the long-term consequences of different worldviews by looking at the "fruit" they produced in the past.'
+  }
+  ,
+  {
+    id: 'Law',
+    title: 'Law: [The System Permissions / ACL]',
+    simpleTitle: 'Law (Rules & Authority)',
+    tech: 'The Access Control List (ACL) and Permissions Manager. It establishes the "Legal Code" that governs what the user is permitted to execute. It defines the boundary between "System Operations" and "User Violations." If the Law module loses its connection to the Theology root, permissions become arbitrary, leading to Privilege_Escalation where the state or individuals grant themselves unauthorized powers.',
+    real: 'Law focuses on the rules that govern a society and the source of their authority. It asks: Are laws created by the powerful to control others, or are they based on a higher "Natural Law" that even governments must obey?'
+  },
+  {
+    id: 'Politics',
+    title: 'Politics: [The Task Manager / System Admin]',
+    simpleTitle: 'Politics (Government & Power)',
+    tech: 'The System Administrator interface. This module decides how the "System Resources" are prioritized and which "Processes" (Policies) are allowed to run in the background. It manages the hierarchy of authority. A bug in Politics often looks like a Process_Deadlock, where conflicting worldviews fight for control of the CPU, or a Hostile_Takeover where one process terminates all others.',
+    real: 'Politics is about the administration of justice and the use of power within a state. It examines the best way to organize a government to protect human rights, maintain order, and allow a community to flourish.'
+  },
+  {
+    id: 'Economics',
+    title: 'Economics: [The Resource Allocation / Memory Management]',
+    simpleTitle: 'Economics (The Study of Resources)',
+    tech: 'The Memory Management Unit (MMU). This module handles the "Input/Output" of value and the distribution of limited "System Memory" (Wealth/Resources). It calculates the "Cost" of operations. When this module is corrupted—as seen in Marxism or extreme Secularism—it leads to Memory_Leaks or Buffer_Overflows, where resources are wasted or improperly channeled, eventually slowing the entire system to a crawl.',
+    real: 'Economics is the study of how a society manages its limited resources (money, time, and labor). It looks at the most moral and efficient ways to exchange goods and provide for the needs of the people.'
+  }
+];
+
+function openDisciplineFilesModal() {
+  const modal = document.getElementById('disciplinesModal');
+  const body = document.getElementById('disciplinesModalBody');
+  if (!modal || !body) return;
+  body.innerHTML = DISCIPLINE_FILES.map(d => `
+    <div class="disc-bubble">
+      <h4>${escapeHtml(plainEnglishMode && d.simpleTitle ? d.simpleTitle : d.title)}</h4>
+      <p>${escapeHtml(plainEnglishMode && d.real ? d.real : d.tech)}</p>
+    </div>
+  `).join('');
+  modal.classList.remove('hidden');
+  // focus for accessibility
+  const closeBtn = document.getElementById('disciplinesModalClose');
+  if (closeBtn) closeBtn.focus();
+}
+
+function closeDisciplineFilesModal() {
+  const modal = document.getElementById('disciplinesModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+}
+
+// wire modal open/close after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  const dfBtn = document.getElementById('disciplineFilesBtn');
+  if (dfBtn) dfBtn.addEventListener('click', openDisciplineFilesModal);
+  const closeBtn = document.getElementById('disciplinesModalClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeDisciplineFilesModal);
+  const backdrop = document.getElementById('disciplinesModalBackdrop');
+  if (backdrop) backdrop.addEventListener('click', closeDisciplineFilesModal);
+  // close on ESC
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDisciplineFilesModal(); });
 });
 
 function renderHome(targetEl) {
@@ -453,6 +650,93 @@ function renderScanView(targetEl) {
   });
 }
 
+// Quick scan simulation for the Scan page — shows demo fallacious arguments
+async function runQuickScan() {
+  const btn = document.getElementById('quickScanBtn');
+  const out = document.getElementById('quickScanSummary');
+  if (!btn || !out) return;
+  btn.disabled = true;
+  // hide the quick scan button once the scan starts
+  btn.classList.add('hidden');
+  out.innerHTML = `<div class="console-loading">Scanning worldview drive for fallacious arguments...</div>`;
+
+  // build demo list by filtering canonical items against persisted quick-scan states
+  const allDemo = DEMO_SCAN_ITEMS.slice();
+  const demo = allDemo.filter(item => !isScanItemFixed(activeKey, item.text));
+
+  // store for modal lookup
+  lastDemoList = demo;
+  demoStates = {};
+
+  if (!demo.length) {
+    out.innerHTML = `
+      <div class="scan-dialog" role="status" aria-live="polite">
+        <div class="scan-dialog-title">No corrupted entries found</div>
+        <div class="scan-dialog-count">0/${allDemo.length}</div>
+        <div style="margin-top:8px;color:var(--muted)">All programs already uncorrupted for this worldview.</div>
+      </div>
+    `;
+    btn.disabled = false;
+    btn.classList.remove('hidden');
+    return;
+  }
+
+  // summarized dialog: count up to total corrupted entries with jumps and bursts
+  const total = demo.length;
+  out.innerHTML = `
+    <div class="scan-dialog" role="status" aria-live="polite">
+      <div class="scan-dialog-title">Corrupted entries found</div>
+      <div class="scan-dialog-count"><span id="scanCount">0</span>/${total}</div>
+    </div>
+  `;
+  const countEl = out.querySelector('#scanCount');
+  if (countEl) {
+    // Perform bursty increments: small fast ticks inside a burst, then a short pause to create jumps
+    let current = 0;
+    const maxBurst = Math.max(1, Math.ceil(total * 0.25)); // up to ~25% per burst
+    while (current < total) {
+      const remaining = total - current;
+      const burst = Math.min(remaining, 1 + Math.floor(Math.random() * maxBurst));
+      // quick intra-burst ticks
+      for (let b = 0; b < burst; b++) {
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((r) => setTimeout(r, 30 + Math.floor(Math.random() * 40))); // 30-70ms
+        current += 1;
+        countEl.textContent = String(current);
+      }
+      // pause between bursts to create a visible jump
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => setTimeout(r, 140 + Math.floor(Math.random() * 260))); // 140-400ms
+    }
+  }
+
+  // append the clickable bubble grid while keeping the scan dialog visible
+  const gridHtml = `
+    <div style="margin-top:12px;">
+      <strong>Detected fallacious arguments</strong>
+      <div class="bubble-grid" id="fallacyGrid">
+        ${demo.map((d, idx) => `<button class="fallacy-bubble" data-index="${idx}">${escapeHtml(stripFallacyLabel(d.text))}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  out.insertAdjacentHTML('beforeend', gridHtml);
+
+  // wire bubble clicks to open the fallacy console modal
+  const grid = document.getElementById('fallacyGrid');
+  if (grid) {
+    grid.querySelectorAll('.fallacy-bubble').forEach((b) => {
+      b.addEventListener('click', (e) => {
+        const idx = Number(b.dataset.index);
+        openFallacyInScan(idx);
+      });
+    });
+  }
+
+  // re-enable and reveal the quick-scan button
+  btn.disabled = false;
+  btn.classList.remove('hidden');
+}
+
 // human-friendly applied patch titles for display
 const APPLIED_PATCH_TITLES = {
   Theology: 'Trinitarian monotheism'
@@ -503,6 +787,66 @@ The Goal: To live a life of obedience that earns God’s favor and leads to para
 The Missing Piece: It is a system based primarily on human effort and law. Unlike the Christian Gospel, there is no inherent assurance of salvation or a personal relationship with a God who has already paid the price for human failure.`
 };
 
+// canonical quick-scan demo items (used by Scan and Status panels)
+const DEMO_SCAN_ITEMS = [
+  { text: `Genetic Fallacy: "You only believe in the Bible because you were born in the West; if you grew up in Thailand, you'd be Buddhist. Therefore, Christianity is false."`, correct: 'Genetic Fallacy' },
+  { text: `Genetic Fallacy: "The concept of a 'savior' originated in ancient pagan myths, so the Christian version must be a copycat myth as well."`, correct: 'Genetic Fallacy' },
+  { text: `False Dilemma: "Either you believe every word of the Bible is literal history, or you have to admit the whole religion is a total lie."`, correct: 'False Dilemma' },
+  { text: `False Dilemma: "God is either all-powerful and lets evil happen, or He is good and can't stop it. Since evil exists, the Christian God cannot exist."`, correct: 'False Dilemma' },
+  { text: `Strawman: "Christians believe in a literal 'sky daddy' who sits on a cloud and throws lightning bolts at people he doesn't like."`, correct: 'Strawman' },
+  { text: `Strawman: "Christianity is just a organized effort to hate science and keep people in the Dark Ages."`, correct: 'Strawman' },
+  { text: `Ad Hominem: "The Crusades and the Inquisition were violent and cruel, so Christian theology is clearly incorrect."`, correct: 'Ad Hominem' },
+  { text: `Ad Hominem: "You're only defending the Church because you're a priest and you want to keep your job and your influence."`, correct: 'Ad Hominem' },
+  { text: `Circular Reasoning: "Miracles are impossible because they violate the laws of nature, and we know the laws of nature can't be violated because miracles don't happen."`, correct: 'Circular Reasoning' },
+  { text: `Circular Reasoning: "Faith is unreliable because it isn't based on evidence, and any evidence you provide isn't valid because it requires faith to accept it."`, correct: 'Circular Reasoning' },
+  { text: `Hasty Generalization: "I met two Christians who were incredibly judgmental, which proves that the religion only produces bad people."`, correct: 'Hasty Generalization' },
+  { text: `Hasty Generalization: "This one specific verse in Leviticus seems strange to modern readers, so the entire Bible is morally outdated and useless."`, correct: 'Hasty Generalization' },
+  { text: `Non-Sequitur: "The Bible was written thousands of years ago, so there is no way Jesus actually rose from the dead."`, correct: 'Non-Sequitur' },
+  { text: `Non-Sequitur: "There are thousands of different Christian denominations; therefore, God does not exist."`, correct: 'Non-Sequitur' },
+  { text: `Red Herring: "You say God is love, but what about the fact that church parking lots are always a mess on Sunday mornings?"`, correct: 'Red Herring' },
+  { text: `Red Herring: "Why should I listen to arguments for the Resurrection when Christian organizations have so much tax-exempt wealth?"`, correct: 'Red Herring' },
+  { text: `Self-Refuting: "There is no such thing as absolute truth, so the Christian claim that 'Jesus is the Truth' is absolutely false."`, correct: 'Self-Refuting' },
+  { text: `Self-Refuting: "We should only believe things that can be scientifically proven; therefore, spiritual claims are invalid." (This claim itself cannot be scientifically proven).`, correct: 'Self-Refuting' },
+  { text: `Equivocation: "Evolution is a fact because things change; Christians deny evolution, so they are denying a basic fact of reality."`, correct: 'Equivocation' },
+  { text: `Equivocation: "The Bible says you should have the faith of a child, but being 'childish' is a bad trait, so Christianity encourages being a bad person."`, correct: 'Equivocation' }
+];
+
+// Persisted quick-scan states stored per-worldview in localStorage under key 'wv_scan_states'
+function loadScanStates() {
+  try {
+    const raw = localStorage.getItem('wv_scan_states');
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveScanStates(map) {
+  try {
+    localStorage.setItem('wv_scan_states', JSON.stringify(map));
+  } catch (e) {
+    // ignore
+  }
+}
+
+function markScanItemFixed(worldviewKey, itemText) {
+  const map = loadScanStates();
+  map[worldviewKey] = map[worldviewKey] || {};
+  map[worldviewKey][itemText] = 'fixed';
+  saveScanStates(map);
+}
+
+function isScanItemFixed(worldviewKey, itemText) {
+  const map = loadScanStates();
+  return !!(map?.[worldviewKey]?.[itemText] === 'fixed');
+}
+
+function getRemainingScanItems(worldviewKey) {
+  const all = DEMO_SCAN_ITEMS || [];
+  const map = loadScanStates();
+  return all.filter(it => !(map?.[worldviewKey]?.[it.text] === 'fixed'));
+}
+
 // toggle state
 let plainEnglishMode = false;
 
@@ -513,6 +857,13 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+// Remove any leading fallacy label like "Strawman: ..." so the bubble text doesn't reveal the answer
+function stripFallacyLabel(text) {
+  if (!text) return '';
+  const m = String(text).match(/^[^:\n]{1,60}:\s*(.*)$/);
+  return m ? m[1] : text;
 }
 
 // Get the display string for a discipline (use belief value when available)
@@ -925,8 +1276,154 @@ if (resetSessionBtn) {
     if (!confirm('Reboot OS and clear saved discipline statuses?')) return;
     try {
       localStorage.removeItem('wv_discipline_status');
+      localStorage.removeItem('wv_scan_states');
     } catch (e) {}
     // re-render current view to reflect cleared statuses
     renderDisciplines(WORLDVIEW_DATA[activeKey]);
   });
 }
+
+// ---- Fallacy bubble / selection modal logic ----
+let lastDemoList = [];
+let demoStates = {};
+
+// Initialize the Scan-side console so it's visible and has placeholder content
+function initializeScanConsole() {
+  const box = document.getElementById('scanConsoleBox');
+  const out = document.getElementById('scanConsoleOutput');
+  const opts = document.getElementById('scanConsoleOptions');
+  if (!box || !out || !opts) return;
+  out.innerHTML = `<p style="color:var(--muted); margin:0;">Scan Console online. Fallacy debug selection options will appear here.</p>`;
+  opts.innerHTML = `<div style="margin-top:10px"><button id="scanClearConsole" class="btn btn-ghost">Clear</button></div>`;
+  const clearBtn = document.getElementById('scanClearConsole');
+  if (clearBtn) clearBtn.addEventListener('click', () => { out.innerHTML=''; opts.innerHTML=''; });
+}
+
+function openFallacyConsole(idx) {
+  // Prefer the scan-side console when available (avoid opening a modal dialog)
+  const scanBox = document.getElementById('scanConsoleBox');
+  if (scanBox) {
+    return openFallacyInScan(idx);
+  }
+  const modal = document.getElementById('fallacyModal');
+  const body = document.getElementById('fallacyModalBody');
+  if (!modal || !body) return;
+  const item = lastDemoList[idx];
+  if (!item) return;
+  const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
+  body.innerHTML = `<p>${escapeHtml(stripFallacyLabel(item.text))}</p><div class="console-options">${options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('')}</div><div style="margin-top:12px"><button id="fallacyCancelBtn" class="btn btn-ghost">Cancel</button></div>`;
+  modal.classList.remove('hidden');
+  // wire option buttons
+  body.querySelectorAll('.console-option').forEach(b => b.addEventListener('click', () => handleFallacySelection(idx, b.dataset.key)));
+  const cancel = document.getElementById('fallacyCancelBtn'); if (cancel) cancel.addEventListener('click', closeFallacyModal);
+  // focus first option for accessibility
+  const firstOpt = body.querySelector('.console-option'); if (firstOpt) firstOpt.focus();
+}
+
+// open the fallacy selection in the Scan page console (right side)
+function openFallacyInScan(idx) {
+  const box = document.getElementById('scanConsoleBox');
+  const out = document.getElementById('scanConsoleOutput');
+  const opts = document.getElementById('scanConsoleOptions');
+  if (!box || !out || !opts) {
+    // fallback to modal if scan console isn't present
+    return openFallacyConsole(idx);
+  }
+  const item = lastDemoList[idx];
+  if (!item) return;
+  out.innerHTML = `<p style="white-space:pre-wrap">${escapeHtml(stripFallacyLabel(item.text))}</p>`;
+  const options = ['Genetic Fallacy','False Dilemma','Strawman','Ad Hominem','Circular Reasoning','Hasty Generalization','Non-Sequitur','Red Herring','Self-Refuting','Equivocation'];
+  opts.innerHTML = options.map(o => `<button class="console-option" data-key="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join('') + `<div style="margin-top:10px"><button id="scanClearConsole" class="btn btn-ghost">Clear</button></div>`;
+  // wire the option buttons to the scan handler
+  opts.querySelectorAll('.console-option').forEach(b => b.addEventListener('click', () => handleFallacySelectionInScan(idx, b.dataset.key)));
+  const clearBtn = document.getElementById('scanClearConsole'); if (clearBtn) clearBtn.addEventListener('click', () => { out.innerHTML=''; opts.innerHTML=''; });
+  // bring focus to the console
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function handleFallacySelectionInScan(idx, chosenKey) {
+  const out = document.getElementById('scanConsoleOutput');
+  const opts = document.getElementById('scanConsoleOptions');
+  const item = lastDemoList[idx];
+  if (!item || !out || !opts) return;
+  const correct = item.correct;
+  if (chosenKey === correct) {
+    demoStates[idx] = 'fixed';
+    const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
+    if (bubble) bubble.classList.add('fixed');
+    // persist fixed state for this worldview so future quick scans omit it
+    if (lastDemoList && lastDemoList[idx] && lastDemoList[idx].text) {
+      markScanItemFixed(activeKey, lastDemoList[idx].text);
+      // refresh Status view counts if visible
+      renderStatusView();
+    }
+    // remove the bubble from the UI (it's no longer part of future scans)
+    if (bubble && bubble.parentElement) bubble.remove();
+    if (selectedDiscipline) setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
+    out.insertAdjacentHTML('beforeend', `<p style="color:var(--green); margin-top:10px;"><strong>Success:</strong> Correct correction applied. Program uncorrupted.</p>`);
+  } else {
+    demoStates[idx] = 'failed';
+    const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
+    if (bubble) bubble.classList.add('failed');
+    out.insertAdjacentHTML('beforeend', `<p style="color:var(--red); margin-top:10px;"><strong>Failure:</strong> Incorrect — program remains corrupted.</p>`);
+  }
+  // disable options visually and show correct/wrong
+  opts.querySelectorAll('.console-option').forEach((o) => {
+    if (o.dataset.key === correct) o.classList.add('correct');
+    if (o.dataset.key === chosenKey && o.dataset.key !== correct) o.classList.add('wrong');
+    o.disabled = true;
+  });
+}
+
+function closeFallacyModal() {
+  const modal = document.getElementById('fallacyModal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+}
+
+function handleFallacySelection(idx, chosenKey) {
+  const modal = document.getElementById('fallacyModal');
+  const body = document.getElementById('fallacyModalBody');
+  const item = lastDemoList[idx];
+  if (!item || !body) return;
+  const correct = item.correct;
+  // mark state and update bubble appearance
+  if (chosenKey === correct) {
+    demoStates[idx] = 'fixed';
+    const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
+    if (bubble) bubble.classList.add('fixed');
+    // persist fixed state for this worldview so future quick scans omit it
+    if (lastDemoList && lastDemoList[idx] && lastDemoList[idx].text) {
+      markScanItemFixed(activeKey, lastDemoList[idx].text);
+      // refresh Status view counts if visible
+      renderStatusView();
+    }
+    // remove the bubble from the UI (it's no longer part of future scans)
+    if (bubble && bubble.parentElement) bubble.remove();
+    // if a discipline is selected, mark it fixed as well
+    if (selectedDiscipline) setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
+    body.insertAdjacentHTML('beforeend', `<p style="color:var(--green); margin-top:10px;"><strong>Success:</strong> Correct correction applied. Program uncorrupted.</p>`);
+  } else {
+    demoStates[idx] = 'failed';
+    const bubble = document.querySelector(`.fallacy-bubble[data-index="${idx}"]`);
+    if (bubble) bubble.classList.add('failed');
+    body.insertAdjacentHTML('beforeend', `<p style="color:var(--red); margin-top:10px;"><strong>Failure:</strong> Incorrect — program remains corrupted.</p>`);
+  }
+  // visually highlight correct/wrong options
+  body.querySelectorAll('.console-option').forEach((o) => {
+    if (o.dataset.key === correct) o.classList.add('correct');
+    if (o.dataset.key === chosenKey && o.dataset.key !== correct) o.classList.add('wrong');
+    o.disabled = true;
+  });
+  // auto-close modal shortly after feedback
+  setTimeout(() => { if (modal) modal.classList.add('hidden'); }, 900);
+}
+
+// modal close wiring (backdrop / close button / ESC)
+const fallacyBackdrop = document.getElementById('fallacyModalBackdrop');
+const fallacyClose = document.getElementById('fallacyModalClose');
+if (fallacyBackdrop) fallacyBackdrop.addEventListener('click', closeFallacyModal);
+if (fallacyClose) fallacyClose.addEventListener('click', closeFallacyModal);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFallacyModal(); });
+
+// ---- end fallacy modal logic ----

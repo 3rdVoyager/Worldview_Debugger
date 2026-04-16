@@ -179,42 +179,41 @@ body::after {
 .bubble.bubble-threat::before { background: #10b981; }
 
 .bubble.bubble-risk {
-  border-color: #ef4444;
-  background: rgba(239,68,68,0.06);
+  border-color: var(--green);
+  background: var(--green-soft);
 }
-.bubble.bubble-risk::before { background: #ef4444; }
+.bubble.bubble-risk::before { background: var(--green); }
 
 .bubble.bubble-status {
-  border-color: #f59e0b;
-  background: rgba(245,158,11,0.05);
+  border-color: var(--green);
+  background: var(--green-soft);
 }
-.bubble.bubble-status::before { background: #f59e0b; }
+.bubble.bubble-status::before { background: var(--green); }
 
 .bubble.bubble-damage {
-  border-color: #6366f1;
-  background: rgba(99,102,241,0.06);
+  border-color: var(--green);
+  background: var(--green-soft);
 }
 
 /* Active view badge sizing */
 #activeBadges { display:flex; gap:8px; margin:0 0 12px; align-items:center; flex-wrap:nowrap; overflow:hidden; }
 #activeBadges .bubble { padding: 6px 12px; font-size: 0.78rem; border-radius: 14px; }
-/* Plain English toggle styling - faux toggle switch */
 #plainToggleBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid rgba(255,255,255,0.06);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 8px 14px;
+  min-width: 150px;
+  cursor: pointer;
 }
+#plainToggleBtn:hover { transform: translateY(-2px); }
 #plainToggleBtn.active {
-  background: linear-gradient(90deg, #0ea5a0, #10b981);
+  background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(16,185,129,0.08));
   color: #04261a;
-  border-color: rgba(16,185,129,0.9);
+  border-color: rgba(16,185,129,0.22);
+  box-shadow: 0 10px 30px rgba(16,185,129,0.06);
 }
-.bubble.bubble-damage::before { background: #6366f1; }
+.bubble.bubble-damage::before { background: var(--green); }
 
 .worldview-item .bubble { transform-origin: right center; }
 
@@ -250,17 +249,121 @@ body::after {
 
 
 .app-shell {
-  width: min(1180px, calc(100% - 32px));
+  /* Add larger horizontal gutters so content isn't pressed to the viewport edge */
+  width: min(1180px, calc(100% - 80px));
   margin: 0 auto;
-  padding: 32px 0 40px;
+  padding: 32px 40px 40px;
 }
 
 .hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
   gap: 24px;
   margin-bottom: 28px;
+}
+
+.hero-top { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; width:100%; }
+.hero-left { max-width: 520px; }
+.hero-right { display:flex; flex-direction:column; gap:10px; align-items:flex-end; justify-content:flex-start; min-width: 260px; }
+.hero-status { display:flex; align-items:center; margin-right:6px; }
+.hero-bottom { width:100%; margin-top:8px; }
+.hero-bottom-row { display:flex; width:100%; justify-content:flex-end; align-items:flex-start; gap:6px; }
+.top-menu { display:flex; gap:8px; align-items:center; flex: 0 1 auto; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0 4px; }
+.top-menu::-webkit-scrollbar { height:6px; }
+.top-menu { scrollbar-width: thin; }
+.menu-tab { white-space:nowrap; min-width:unset; max-width:40ch; }
+.hero-controls { display:flex; gap:10px; align-items:center; }
+.hero-controls.relocated { margin-top:8px; display:flex; flex-wrap:nowrap; justify-content:flex-end; }
+
+/* Header control buttons (Plain English, Discipline Files, Reboot OS, etc.) */
+.hero-controls .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 14px;
+  min-height: 40px;
+  min-width: 150px; /* unify widths so Reboot matches other header controls */
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--amber);
+  border: 1px solid var(--amber-soft);
+  font-weight: 700;
+  font-size: 0.98rem;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease, box-shadow 200ms ease;
+  box-shadow: 0 6px 22px rgba(0,0,0,0.45);
+}
+.hero-controls .btn:hover { transform: translateY(-2px); background: rgba(245,158,11,0.06); border-color: var(--amber); }
+.hero-controls .btn:active { transform: translateY(0); box-shadow:none; border-color: rgba(245,158,11,0.28); }
+.hero-controls .btn.primary {
+  background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(16,185,129,0.08));
+  border-color: rgba(16,185,129,0.22);
+  color: #04261a;
+}
+
+/* Make the Run Quick Scan button visually clear with amber outline and text */
+#quickScanBtn {
+  background: transparent;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  box-shadow: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 12px;
+}
+#quickScanBtn:hover {
+  background: rgba(245,158,11,0.06);
+  transform: translateY(-2px);
+}
+#quickScanBtn:active { transform: translateY(0); }
+.hero-controls .btn.ghost {
+  background: transparent;
+  border-color: rgba(245,158,11,0.06);
+  color: var(--amber);
+  font-weight:700;
+}
+.hero-controls.relocated .btn { padding: 8px 12px; font-size: 0.95rem; }
+
+/* Reduce excessive tab height and make tabs horizontally compact */
+.menu-tab { padding: 6px 10px; border-radius: 999px; font-size: 0.92rem; }
+.menu-tab.active { transform: none; }
+
+/* Prevent the title from forcing the nav down and keep it compact */
+.hero-title { max-width: 34ch; display:block; }
+.hero-title h1 { font-size: 1.5rem; margin: 0 0 4px 0; line-height:1.02; font-weight:700; letter-spacing: -0.02em; color:var(--green); }
+
+@media (min-width: 1180px) {
+  .app-shell { width: 1180px; }
+}
+
+@media (max-width: 820px) {
+  .hero-left { max-width: 100%; }
+  .hero-bottom-row { flex-direction:column; align-items:stretch; gap:8px; }
+  .hero-controls.relocated { display:flex; justify-content:flex-end; }
+}
+
+/* For wider screens keep tabs horizontal row on the upper-right with controls beneath */
+@media (min-width: 821px) {
+  /* On desktop keep tabs in single horizontal row and controls underneath in one row */
+  .hero-bottom-row { flex-direction:column; align-items:flex-end; }
+  .top-menu { order: 1; display:flex; }
+  .hero-controls.relocated { order: 2; display:flex; }
+}
+
+/* If tabs overflow, allow subtle horizontal scroll while keeping them visually single-line */
+.top-menu.scrollable { overflow-x:auto; }
+
+@media (max-width: 820px) {
+  .hero-bottom-row { flex-direction:column; align-items:stretch; gap:10px; }
+  .top-menu { order: 1; }
+  .hero-controls.relocated { order: 2; justify-self:flex-end; }
 }
 
 .top-menu {
@@ -268,20 +371,95 @@ body::after {
   gap: 8px;
   margin-bottom: 8px;
 }
+.top-menu { flex-wrap: wrap; }
 .menu-tab {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: none;
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease, background 120ms ease, border-color 120ms ease;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--muted);
-  padding: 6px 10px;
-  border-radius: 8px;
+  color: var(--green);
+  border: 1px solid var(--green-soft);
+  padding-inline: 14px;
 }
+.menu-tab:hover { background: rgba(16,185,129,0.04); transform: translateY(-2px); }
 .menu-tab.active {
-  background: rgba(255,255,255,0.04);
-  color: #ecfdf5;
-  border-color: rgba(255,255,255,0.12);
+  background: rgba(16,185,129,0.06);
+  color: var(--green);
+  border-color: var(--green);
+  box-shadow: 0 6px 18px rgba(16,185,129,0.06);
 }
-.hero-title h1 { font-size: 1.6rem; margin: 0; }
-.hero-title .hero-copy { margin: 6px 0 0; }
+
+/* Make menu tabs visually smaller than primary action buttons */
+.top-menu .menu-tab { font-size: 0.98rem; padding: 8px 14px; }
+.hero-controls .btn { min-height: 36px; }
+.hero-title { display:block; }
+.hero-title h1 { font-size: 1.5rem; margin: 0 0 4px 0; line-height:1.02; font-weight:700; letter-spacing: -0.02em; color:var(--green); }
+
+/* Accent headers: make headings stand out */
+h1,h2 { color: var(--green); }
+h3,h4 { color: var(--amber); }
+h5,h6 { color: var(--green); }
+
+/* Scan dialog used by quick scan animation */
+.scan-dialog { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px; border-radius:10px; background: rgba(0,0,0,0.18); border: 1px solid rgba(16,185,129,0.12); box-shadow: 0 10px 30px rgba(0,0,0,0.6); max-width: 560px; margin: 6px 0; }
+.scan-dialog-title { font-size: 1rem; font-weight: 800; color: var(--green); letter-spacing: 0.06em; text-transform: none; }
+.scan-dialog-count { font-size: 1.8rem; font-weight: 900; color: var(--green); }
+ .scan-dialog-count #scanCount { display:inline-block; min-width: 2ch; text-align:right; }
+
+/* Layout: place quick scan button and its summary on a single line when space allows */
+.scan-hero > div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.scan-hero #quickScanSummary { margin-top: 0 !important; }
+
+@media (max-width: 780px) {
+  .scan-hero > div { flex-direction: column; align-items: stretch; }
+  .scan-hero #quickScanSummary { margin-top: 12px !important; }
+}
+
+/* Global fallacy list styling on Status page */
+.status-global-fallacies { margin-top: 18px; padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.36); }
+.status-global-fallacies h3 { margin: 0 0 8px 0; color: var(--green); }
+.status-global-fallacies .panel-label { margin: 0 0 8px 0; color: var(--muted); }
+.global-scan-actions { margin-bottom: 10px; }
+.global-scan-list { display:flex; flex-wrap:wrap; gap:10px; }
+.global-scan-list .fallacy-item {
+  display:inline-flex;
+  align-items:center;
+  padding:10px 14px;
+  border-radius:10px;
+  background: rgba(0,0,0,0.22);
+  color: #ecfdf5;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight:700;
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: default;
+}
+.global-scan-list .fallacy-item.remaining {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: transparent;
+}
+.global-scan-list .fallacy-item.fixed {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-soft);
+}
+.global-scan-list .fallacy-item .tag { margin-left:8px; font-size:0.75rem; padding:2px 6px; border-radius:6px; background: rgba(255,255,255,0.03); color: inherit; }
+.hero-title .hero-copy { display:block; margin: 0; color: var(--muted); max-width: 58ch; line-height:1.45; font-size:0.98rem; }
+
+@media (max-width: 900px) {
+  .hero-title h1 { font-size: 1.4rem; }
+  .hero-copy { font-size: 0.95rem; }
+}
 
 /* Page container handling */
 .page { padding: 18px 0; }
@@ -311,6 +489,45 @@ body::after {
 .home-description h3 { margin: 0 0 8px; }
 .home-description p { margin: 6px 0; color: var(--muted); }
 .muted { color: var(--muted); font-size: 0.95rem; }
+
+/* Status page styles */
+.status-panel { max-width: 1180px; margin: 6px auto; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items:start; }
+.status-header { grid-column: 1 / -1; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.status-summary { margin-top:6px; color:var(--muted); font-size:0.95rem; grid-column: 1 / -1; }
+.status-worldviews { display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; margin-top:6px; grid-column: 1 / 2; }
+.status-card { padding:14px; border-radius:10px; background: rgba(0,0,0,0.14); border:1px solid rgba(255,255,255,0.03); min-height:120px; }
+.status-card h3 { margin:0 0 6px; font-size:1.06rem; }
+.status-meta { font-size:0.9rem; color:var(--muted); margin-bottom:8px; }
+.status-discipline-list { margin-top:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; }
+.status-discipline { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border:1px solid rgba(255,255,255,0.02); box-shadow: none; min-width: 140px; max-width: 1fr; }
+.status-discipline .status-dot { width:12px; height:12px; border-radius:50%; display:inline-block; flex: 0 0 auto; }
+.status-discipline .sd-label { font-weight:600; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.95rem; }
+
+@media (max-width: 880px) {
+  .status-discipline { min-width: 110px; }
+  .status-worldviews { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
+  .status-panel { grid-template-columns: 1fr; }
+  .status-worldviews { grid-column: 1 / -1; }
+  .status-global-fallacies { grid-column: 1 / -1; margin-top: 12px; }
+}
+.status-dot.unfixed { background: var(--amber); }
+.status-dot.partial { background: var(--amber); }
+.status-dot.fixed { background: var(--green); }
+
+/* Modal: Discipline Files */
+.modal { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index: 2000; }
+.modal.hidden { display: none; }
+.modal-backdrop { position:absolute; inset:0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+.modal-content { position:relative; z-index:2; width: min(980px, 94%); max-height: 84vh; overflow:auto; background: linear-gradient(180deg, rgba(6,8,6,0.96), rgba(3,5,3,0.98)); padding: 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+.modal-close { position:absolute; right:12px; top:10px; background:transparent; border:0; font-size:20px; color:var(--muted); cursor:pointer; }
+.modal-body { margin-top:8px; color:var(--muted); line-height:1.6; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.discipline-file, .disc-bubble { padding: 12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+.discipline-file h4, .disc-bubble h4 { margin: 0 0 8px; color: var(--text); font-size: 1rem; }
+.discipline-file p, .disc-bubble p { margin: 0; color: var(--muted); }
+.disc-bubble { display:flex; flex-direction:column; justify-content:center; }
+@media (max-width: 740px) {
+  .modal-body { grid-template-columns: 1fr; }
+}
 
 /* Debug page styles */
 #page-debug .debug-panel { padding: 12px; }
@@ -359,6 +576,42 @@ h1 {
   color: var(--muted);
   margin: 14px 0 0;
   line-height: 1.6;
+}
+
+/* Bubble grid for detected fallacies */
+.bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.fallacy-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.fallacy-bubble:hover { transform: translateY(-3px); }
+.fallacy-bubble.fixed { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.fallacy-bubble.failed { border-color: var(--red); background: rgba(239,68,68,0.04); }
+
+/* Console option list inside the fallacy modal */
+.console-options { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.console-option { padding:10px 12px; border-radius:8px; background: rgba(0,0,0,0.18); color:var(--text); border:1px solid rgba(255,255,255,0.03); cursor:pointer; font-family: 'IBM Plex Mono', monospace; }
+.console-option:hover { transform: translateY(-2px); }
+.console-option.correct { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.console-option.wrong { border-color: var(--red); background: rgba(239,68,68,0.04); }
+
+@media (max-width: 740px) {
+  .bubble-grid { grid-template-columns: 1fr; }
 }
 
 .hero-status {
@@ -731,7 +984,7 @@ h2 {
   height: 8px;
   border-radius: 999px;
   background: var(--amber);
-  box-shadow: none; /* remove legacy yellow halo */
+  box-shadow: none;
 }
 
 .status-toggle[aria-pressed="true"] {
@@ -744,10 +997,13 @@ h2 {
   border-color: rgba(34,197,94,0.18);
 }
 
-/* small reset session button styling override */
+/* small reset session button styling override (match header controls) */
 #resetSessionBtn {
-  padding: 8px 12px;
-  font-size: 0.78rem;
+  padding: 8px 14px;
+  font-size: 0.98rem;
+  min-width: 150px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
 }
 
 /* hide global diagnostic badge (UI-only; terminal removed) */
