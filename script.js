@@ -278,6 +278,23 @@ let analyzeTimer = null;
 // developer/terminal mode removed
 let selectedDiscipline = null; // currently-selected discipline label
 
+// human-friendly applied patch titles for display
+const APPLIED_PATCH_TITLES = {
+  Theology: 'Trinitarian monotheism'
+};
+// expand mapping to Christian discipline labels
+Object.assign(APPLIED_PATCH_TITLES, {
+  Philosophy: 'Dualism',
+  Ethics: 'Agape',
+  Biology: 'Special Creation',
+  Psychology: 'Mind/Body Dualism',
+  Sociology: 'Sphere Sovereignty',
+  Law: 'Natural Law',
+  Politics: 'Subsidiarity',
+  Economics: 'Biblical Stewardship',
+  History: 'Redemptive Narrative'
+});
+
 function escapeHtml(value) {
   return value
     .replaceAll('&', '&amp;')
@@ -294,12 +311,6 @@ function renderWorldviewSelector() {
       <li>
         <button class="worldview-item ${key === activeKey ? 'active' : ''}" data-key="${key}" aria-pressed="${key === activeKey}">
               <span class="worldview-name">${worldview.name}</span>
-              <div class="worldview-badges">
-                <span class="bubble bubble-risk">Risk: ${escapeHtml(String(worldview.risk || ''))}</span>
-                <span class="bubble bubble-status">Status: ${escapeHtml(String(worldview.status || ''))}</span>
-                <span class="bubble bubble-damage">Damage: ${escapeHtml(String(worldview.damage_percentage || '0'))}%</span>
-                ${worldview.threats && worldview.threats.length ? worldview.threats.map((t) => `<span class="bubble bubble-threat">${escapeHtml(t)}</span>`).join('') : ''}
-              </div>
             </button>
       </li>
     `;
@@ -308,6 +319,17 @@ function renderWorldviewSelector() {
   worldviewList.querySelectorAll('.worldview-item').forEach((item) => {
     item.addEventListener('click', () => setActiveView(item.dataset.key));
   });
+}
+
+function renderActiveBadges(worldview) {
+  const container = document.getElementById('activeBadges');
+  if (!container) return;
+  container.innerHTML = `
+    <span class="bubble bubble-risk">Risk: ${escapeHtml(String(worldview.risk || ''))}</span>
+    <span class="bubble bubble-status">Status: ${escapeHtml(String(worldview.status || ''))}</span>
+    <span class="bubble bubble-damage">Damage: ${escapeHtml(String(worldview.damage_percentage || '0'))}%</span>
+    ${worldview.threats && worldview.threats.length ? worldview.threats.map((t) => `<span class="bubble bubble-threat">${escapeHtml(t)}</span>`).join('') : ''}
+  `;
 }
 
 function renderDisciplines(worldview) {
@@ -442,11 +464,11 @@ function renderConsole(worldview) {
 function updateGlobalStatus() {
   if (patchApplied) {
     globalStatus.innerHTML = '<span class="status-dot"></span><span>System Restored</span>';
-    activeStatus.textContent = 'Restored';
+    if (activeStatus) activeStatus.textContent = 'Restored';
   } else {
     // show normal status (developer/terminal mode removed)
-    globalStatus.innerHTML = `<span class="status-dot"></span><span>Diagnostic Mode</span>`;
-    activeStatus.textContent = WORLDVIEW_DATA[activeKey].status;
+    globalStatus.innerHTML = `<span class="status-dot" aria-hidden="true"></span>`;
+    if (activeStatus) activeStatus.textContent = WORLDVIEW_DATA[activeKey].status;
   }
 }
 
@@ -463,6 +485,7 @@ function setActiveView(key) {
   activeName.textContent = worldview.name;
   renderDisciplines(worldview);
   renderConsole(worldview);
+  renderActiveBadges(worldview);
   updateGlobalStatus();
   // ensure analyze button disabled until a discipline is selected
   updateAnalyzeButton();
@@ -494,6 +517,8 @@ function showAnalysis() {
   consoleBox.style.setProperty('--scan-speed', calcSpeed);
   // start scan animation
   consoleBox.classList.add('scan-pulse');
+  // disable worldview and discipline selection while scanning
+  disableSelectors(true);
   // mark discipline as 'partial' (scanning/in-progress)
   setDisciplineStatus(activeKey, selectedDiscipline, 'partial');
 
@@ -531,7 +556,8 @@ function showAnalysis() {
       const patchText = worldview.christianPatch && worldview.christianPatch[selectedDiscipline];
       if (patchText) {
         // Render patch as a bullet list to match the bugs box styling
-        patchBox.innerHTML = `<span class="patch-title">Proposed Biblical Patch (${escapeHtml(selectedDiscipline)})</span><ul>${`<li>${escapeHtml(patchText)}</li>`}</ul>`;
+        const proposedTitle = APPLIED_PATCH_TITLES[selectedDiscipline] || selectedDiscipline;
+        patchBox.innerHTML = `<span class="patch-title">Proposed Biblical Patch (${escapeHtml(proposedTitle)})</span><ul>${`<li>${escapeHtml(patchText)}</li>`}</ul>`;
         patchBox.classList.remove('hidden');
       } else {
         patchBox.classList.add('hidden');
@@ -546,6 +572,7 @@ function showAnalysis() {
     consoleBox.classList.remove('scan-pulse');
     consoleBox.style.removeProperty('--scan-speed');
     analyzeBtn.disabled = false;
+    // leave selectors disabled until patch applied
   }, scanMs);
 }
 
@@ -600,7 +627,8 @@ function applyPatchForSelected() {
   if (patchBox) {
     const patchText = worldview.christianPatch && worldview.christianPatch[selectedDiscipline];
     if (patchText) {
-      patchBox.innerHTML = `<span class="patch-title">Applied Biblical Patch (${escapeHtml(selectedDiscipline)})</span><ul><li>${escapeHtml(patchText)}</li></ul>`;
+      const appliedTitle = APPLIED_PATCH_TITLES[selectedDiscipline] || selectedDiscipline;
+      patchBox.innerHTML = `<span class="patch-title">Applied Biblical Patch (${escapeHtml(appliedTitle)})</span><ul><li>${escapeHtml(patchText)}</li></ul>`;
       patchBox.classList.remove('hidden');
     }
   }
@@ -610,7 +638,28 @@ function applyPatchForSelected() {
     setAnalyzeButtonToAnalyze();
     // keep analyze disabled until user re-selects or leaves selection
     analyzeBtn.disabled = false;
+    // re-enable worldview and discipline selection after patch applied
+    disableSelectors(false);
   }, 700);
+}
+
+function disableSelectors(disabled) {
+  // disable worldview buttons
+  const items = document.querySelectorAll('.worldview-item');
+  items.forEach((b) => { b.disabled = disabled; });
+  // disable discipline boxes (they are articles acting as buttons)
+  const boxes = document.querySelectorAll('.discipline-box');
+  boxes.forEach((box) => {
+    if (disabled) {
+      box.setAttribute('aria-disabled', 'true');
+      box.classList.add('disabled');
+      box.tabIndex = -1;
+    } else {
+      box.removeAttribute('aria-disabled');
+      box.classList.remove('disabled');
+      box.tabIndex = 0;
+    }
+  });
 }
 
 renderWorldviewSelector();

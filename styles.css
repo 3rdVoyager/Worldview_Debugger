@@ -139,10 +139,10 @@ body::after {
   flex-direction: row;
   gap: 8px;
   align-items: center;
-  margin-left: 12px;
-  justify-self: end;
+  justify-self: start;
   white-space: nowrap;
   overflow: hidden;
+  max-width: 100%;
 }
 
 .bubble {
@@ -150,50 +150,54 @@ body::after {
   align-items: center;
   gap: 8px;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   padding: 6px 12px;
-  border-radius: 10px;
-  background: #000000; /* solid black interior */
-  color: #ffffff; /* white text */
-  font-weight: 600;
-  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.18);
+  color: #ffffff;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.04);
   transform: none;
   white-space: nowrap;
-  box-shadow: none; /* remove halo/glow */
+  box-shadow: none;
 }
 
 .bubble::before {
   content: '';
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 6px;
   margin-right: 8px;
   box-shadow: none;
 }
 
 .bubble.bubble-threat {
-  border-color: #10b981; /* neon green outline */
-  box-shadow: none; /* remove halo */
+  border-color: #10b981;
+  background: rgba(16,185,129,0.06);
 }
 .bubble.bubble-threat::before { background: #10b981; }
 
 .bubble.bubble-risk {
-  border-color: #ef4444; /* neon red outline */
-  box-shadow: none;
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.06);
 }
 .bubble.bubble-risk::before { background: #ef4444; }
 
 .bubble.bubble-status {
-  border-color: #f59e0b; /* neon amber outline */
-  box-shadow: none;
+  border-color: #f59e0b;
+  background: rgba(245,158,11,0.05);
 }
 .bubble.bubble-status::before { background: #f59e0b; }
 
 .bubble.bubble-damage {
-  border-color: #6366f1; /* neon indigo outline */
-  box-shadow: none;
+  border-color: #6366f1;
+  background: rgba(99,102,241,0.06);
 }
+
+/* Active view badge sizing */
+#activeBadges { display:flex; gap:8px; margin:0 0 12px; align-items:center; flex-wrap:nowrap; overflow:hidden; }
+#activeBadges .bubble { padding: 6px 12px; font-size: 0.78rem; border-radius: 14px; }
 .bubble.bubble-damage::before { background: #6366f1; }
 
 .worldview-item .bubble { transform-origin: right center; }
@@ -385,16 +389,20 @@ h2 {
 .disciplines {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px; /* tighter gaps for denser layout */
+  gap: 12px;
 }
 
 .discipline-box {
   display: block;
-  min-height: 36px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: rgba(0, 6, 5, 0.92); /* slightly stronger interior so boxes are visible */
-  border: 1px solid rgba(34, 197, 94, 0.08); /* stronger border to show box outlines */
+  min-height: 52px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 6, 5, 0.94);
+  border: 1px solid rgba(34, 197, 94, 0.08);
+}
+.discipline-box.disabled {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .discipline-label {
@@ -404,7 +412,7 @@ h2 {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #fcd34d;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .discipline-text,
@@ -451,6 +459,13 @@ h2 {
   border-color: rgba(16,185,129,0.6);
   color: #dff6ff;
 }
+
+@media (min-width: 1100px) {
+  .disciplines { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
+
+#activeBadges { display:flex; gap:10px; margin:8px 0 12px; align-items:center; flex-wrap:wrap; }
+@media (max-width: 640px) { #activeBadges { gap:8px; } }
 
 /* stronger focus-visible ring for keyboard users */
 .discipline-box:focus,
@@ -638,6 +653,9 @@ h2 {
   padding: 8px 12px;
   font-size: 0.78rem;
 }
+
+/* hide global diagnostic badge (UI-only; terminal removed) */
+#globalStatus { display: none; }
 
 .hidden {
   display: none;
