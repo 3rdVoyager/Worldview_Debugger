@@ -295,6 +295,42 @@ Object.assign(APPLIED_PATCH_TITLES, {
   History: 'Redemptive Narrative'
 });
 
+// plain-English summaries keyed by worldview key
+const PLAIN_ENGLISH = {
+  secularism: `Core Belief: This worldview asserts that the physical world is all there is. It places human reason, ethics, and social justice at the center of life without any reliance on a supernatural creator or divine revelation.
+
+The Goal: To achieve human flourishing through science, democracy, and individual freedom.
+
+The Missing Piece: Because it rejects a higher authority, it struggles to provide a permanent foundation for why humans have "inherent rights" beyond just social agreement or biological survival.`,
+
+  postmodernism: `Core Belief: This is a skeptical worldview that claims "Truth" is not something objective we discover, but something communities "construct" through language and power. It rejects "Grand Narratives" (universal stories like the Bible or even Science) that claim to explain life for everyone.
+
+The Goal: To protect individuals from being oppressed by other people's "truth" and to celebrate diversity of perspective.
+
+The Missing Piece: By claiming there is no absolute truth, the system becomes self-refuting (since that claim itself is treated as an absolute truth). It leaves people without a solid ground to stand on.`,
+
+  marxism: `Core Belief: Marxism views all of history as a struggle between the "oppressor" and the "oppressed," specifically regarding economic and social class. It believes that the current system is fundamentally broken and must be dismantled to create a classless, equal society.
+
+The Goal: To eliminate inequality and exploitation by restructuring society and redistributing power and resources.
+
+The Missing Piece: It tends to view people only as members of a group rather than individuals made in God’s image. Historically, this has led to the suppression of individual conscience and the rise of total state control.`,
+
+  newSpirituality: `Core Belief: This worldview teaches that "All is One" and that everything—humanity, nature, and the universe—is part of a single, divine energy or consciousness. It focuses on personal "awakening" and spiritual evolution.
+
+The Goal: To achieve harmony with the universe and discover the "divinity within" yourself.
+
+The Missing Piece: If everything is one and "God is everything," then the distinction between good and evil disappears. It provides no objective basis for morality because it blurs the line between the Creator and the creation.`,
+
+  islam: `Core Belief: A monotheistic faith based on the belief that there is one God (Allah) and that Muhammad is his final prophet. Life is centered on total submission to the will of God through the "Five Pillars" and a strict moral code.
+
+The Goal: To live a life of obedience that earns God’s favor and leads to paradise in the afterlife.
+
+The Missing Piece: It is a system based primarily on human effort and law. Unlike the Christian Gospel, there is no inherent assurance of salvation or a personal relationship with a God who has already paid the price for human failure.`
+};
+
+// toggle state
+let plainEnglishMode = false;
+
 function escapeHtml(value) {
   return value
     .replaceAll('&', '&amp;')
@@ -330,6 +366,20 @@ function renderActiveBadges(worldview) {
     <span class="bubble bubble-damage">Damage: ${escapeHtml(String(worldview.damage_percentage || '0'))}%</span>
     ${worldview.threats && worldview.threats.length ? worldview.threats.map((t) => `<span class="bubble bubble-threat">${escapeHtml(t)}</span>`).join('') : ''}
   `;
+}
+
+function renderDescription(worldview) {
+  const descEl = document.getElementById('activeDescription');
+  if (!descEl) return;
+  if (plainEnglishMode) {
+    const key = Object.keys(WORLDVIEW_DATA).find(k => WORLDVIEW_DATA[k].name === worldview.name) || activeKey;
+    const txt = PLAIN_ENGLISH[key] || worldview.description || '';
+    // split on double newlines and render as paragraphs to preserve breaks
+    const parts = String(txt).split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+    descEl.innerHTML = parts.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+  } else {
+    descEl.textContent = worldview.description || '';
+  }
 }
 
 function renderDisciplines(worldview) {
@@ -486,6 +536,7 @@ function setActiveView(key) {
   renderDisciplines(worldview);
   renderConsole(worldview);
   renderActiveBadges(worldview);
+  renderDescription(worldview);
   updateGlobalStatus();
   // ensure analyze button disabled until a discipline is selected
   updateAnalyzeButton();
@@ -665,6 +716,16 @@ function disableSelectors(disabled) {
 renderWorldviewSelector();
 setActiveView(activeKey);
 // terminal removed — initTerminal deprecated
+
+// wire Plain English toggle
+const plainToggle = document.getElementById('plainToggle');
+if (plainToggle) {
+  plainToggle.addEventListener('change', (e) => {
+    plainEnglishMode = !!e.target.checked;
+    const worldview = WORLDVIEW_DATA[activeKey];
+    renderDescription(worldview);
+  });
+}
 
 // wire Reset Session button
 const resetSessionBtn = document.getElementById('resetSessionBtn');
