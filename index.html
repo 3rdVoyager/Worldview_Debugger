@@ -19,8 +19,10 @@
         </p>
       </div>
       <div class="hero-status" id="globalStatus">
-        <span class="status-dot"></span>
-        <span>Diagnostic Mode</span>
+        <span class="status-dot" aria-hidden="true"></span>
+      </div>
+      <div style="margin-left:16px">
+        <button id="resetSessionBtn" class="btn btn-ghost">Reboot OS</button>
       </div>
     </header>
 
@@ -44,10 +46,15 @@
           <span class="status-pill" id="activeStatus">Critical Vulnerability</span>
         </div>
 
+        <div class="panel-meta">
+          <p id="activeTagline" class="panel-subtitle"></p>
+          <p id="activeDescription" class="panel-description"></p>
+        </div>
+
         <div class="disciplines" id="disciplines"></div>
 
         <div class="action-row">
-          <button class="btn btn-ghost" id="analyzeBtn">Analyze System</button>
+          <button class="btn btn-ghost" id="analyzeBtn">Analyze Program</button>
         </div>
       </div>
 
@@ -58,23 +65,15 @@
         </div>
         <div class="console-box" id="consoleBox">
           <div class="console-output" id="consoleOutput"></div>
+          <div class="scan-line" aria-hidden="true"></div>
           <div class="console-loading hidden" id="loadingState">Scanning for logical fallacies...</div>
           <div class="console-bugs hidden" id="bugList"></div>
+          <div class="proposed-patch hidden" id="patchBox" aria-live="polite"></div>
         </div>
       </aside>
     </section>
 
-    <div class="terminal hidden" id="terminalPanel" aria-hidden="true">
-      <div class="terminal-topbar">
-        <span>Command Terminal</span>
-        <span class="terminal-microcopy">Type help for commands</span>
-      </div>
-      <div class="terminal-output" id="terminalOutput"></div>
-      <label class="terminal-input-row">
-        <span>&gt;</span>
-        <input id="terminalInput" type="text" autocomplete="off" placeholder="Enter command..." />
-      </label>
-    </div>
+    <!-- terminal removed — developer mode deprecated -->
   </main>
 
   <script src="script.js"></script>

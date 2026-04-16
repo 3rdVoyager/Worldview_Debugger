@@ -1,6 +1,8 @@
 const WORLDVIEW_DATA = {
   secularism: {
     name: 'Secularism',
+    tagline: 'The Dependency Ghost',
+    description: `This program attempts to execute high-level ethical functions like Human_Rights.exe and Objective_Justice.pkg while having deleted the core Creator.dll dependency. It relies on 'Legacy Emulation'—running on the memory of a Christian past—but because the backend server has been disconnected, the system is prone to 'Logic Ghosting' where values remain on screen but have no data supporting them in the BIOS.`,
     status: 'SYSTEM_DEPENDENCY_ERROR',
     risk: 'Moderate',
     damage_percentage: 16,
@@ -23,6 +25,18 @@ const WORLDVIEW_DATA = {
       'Makes autonomy the highest good while depending on shared norms it cannot ultimately justify.',
       'Promises progress without a fixed standard for what counts as moral improvement.'
     ],
+    disciplineErrors: {
+      Theology: ["Denies transcendent moral grounding, leaving ethics unsupported."],
+      Philosophy: ["Elevates empirical materialism while dismissing metaphysical truth."],
+      Ethics: ["Treats morality as social preference instead of objective duty."],
+      Biology: ["Reduces human dignity to biology, undermining inherent worth."],
+      Psychology: ["Promotes self-actualization as the highest good, ignoring moral failure."],
+      Sociology: ["Prioritizes autonomy over community bonds, producing social fragmentation."],
+      Law: ["Separates law from moral law, resulting in legal positivism without guardrails."],
+      Politics: ["Assumes progress without an objective standard, risking policy drift."],
+      Economics: ["Frames economics as technocratic management rather than stewardship."],
+      History: ["Narrative of inevitable progress lacks moral criteria to judge advancement."]
+    },
     christianPatch: {
       Theology: 'God is Lord over all life and knowledge, not a private add-on.',
       Philosophy: 'Truth is coherent because reality is grounded in the Creator.',
@@ -38,6 +52,8 @@ const WORLDVIEW_DATA = {
   },
   marxism: {
     name: 'Marxism',
+    tagline: 'The Resource Hijacker',
+    description: `This system operates as a Totalitarian Kernel Override. It attempts to force-quit all individual user processes (Imago_Dei.user) to prioritize a single, collective system task. However, because it lacks a 'Moral Firewall,' the program is easily hijacked by 'Power_Lust' malware. It promises to optimize system resources but historically results in a 'Total System Wipe' and permanent 'Kernel Panic'.`,
     status: 'SYSTEM_TAKEOVER_IMMINENT',
     risk: 'Critical',
     damage_percentage: 7,
@@ -60,6 +76,18 @@ const WORLDVIEW_DATA = {
       'Utopian promises repeatedly collapse under the weight of coercion and human fallenness.',
       'Cannot provide a stable reason that one class must be treated as morally superior to another.'
     ],
+    disciplineErrors: {
+      Theology: ["Rejects personal faith as mere opiate without engaging spiritual claims."],
+      Philosophy: ["Reduces ideas to class struggle, erasing individual personhood."],
+      Ethics: ["Justifies ends by class goals, sidelining intrinsic human dignity."],
+      Biology: ["Interprets biology through class narratives, ignoring individual uniqueness."],
+      Psychology: ["Attributes behavior entirely to class position, neglecting personal responsibility."],
+      Sociology: ["Prioritizes collective identity while suppressing pluralism."],
+      Law: ["Turns law into an instrument of class power rather than protecting rights."],
+      Politics: ["Centralizes power in the state, enabling coercive solutions."],
+      Economics: ["Collectivist economics can remove incentives and accountability."],
+      History: ["Reads history only as material forces, missing moral and spiritual factors."]
+    },
     christianPatch: {
       Theology: 'God, not class conflict, is ultimate over history and judgment.',
       Philosophy: 'Reality is more than matter; persons, truth, and morality are real.',
@@ -75,6 +103,8 @@ const WORLDVIEW_DATA = {
   },
   postmodernism: {
     name: 'Postmodernism',
+    tagline: 'The Recursive Loop',
+    description: `A highly unstable build characterized by Circular Logic Recursion. The program’s primary directive is to output Error: Truth_Not_Found, but it uses an absolute truth-claim to verify that no absolute truth exists. This creates an infinite loop that eventually crashes the compiler. It refuses to map to any external hardware (Reality), insisting that the software is the only thing that exists, yet the software cannot define itself.`,
     status: 'CIRCULAR_DEPENDENCY_DETECTED',
     risk: 'Moderate',
     damage_percentage: 10,
@@ -97,6 +127,18 @@ const WORLDVIEW_DATA = {
       'Cannot explain why justice should matter if morality is only constructed.',
       'Leaves meaning unstable, because interpretation has no final anchor.'
     ],
+    disciplineErrors: {
+      Theology: ["Dismantles religious claims as mere discourse without assessing truth."],
+      Philosophy: ["Rejects objective truth, making coherent debate difficult."],
+      Ethics: ["Relativizes morality so critique becomes inconsistent."],
+      Biology: ["Denies fixed biological categories needed for coherent science."],
+      Psychology: ["A decentered subject leaves no stable identity for moral responsibility."],
+      Sociology: ["Overemphasizes social construction, eroding trans-social norms."],
+      Law: ["Undermines legal universality by treating law as narrative."],
+      Politics: ["Paralyzes public reason through skepticism of shared truth."],
+      Economics: ["Treats economic systems as texts to interpret, not structures to manage."],
+      History: ["Narrows history to interpretation, denying overarching historical meaning."]
+    },
     christianPatch: {
       Theology: 'God reveals truth that stands above shifting discourse communities.',
       Philosophy: 'Objective truth exists because reality is grounded in God.',
@@ -112,6 +154,8 @@ const WORLDVIEW_DATA = {
   },
   newSpirituality: {
     name: 'New Spirituality',
+    tagline: 'The Cloud-Only Sync',
+    description: `This program uploads all local data to 'The Great Cloud' (Universal Consciousness) until nothing remains grounded on the physical device. It suffers from Parity Bit Mismatch—by claiming that 'All Data is One,' it loses the ability to distinguish between 'Safe' and 'Malicious' files. If everything is the same piece of code, the system can no longer identify or delete 'Sin' or 'Error' subroutines.`,
     status: 'CLOUD_SERVICE_OVERLOAD',
     risk: 'Moderate',
     damage_percentage: 15,
@@ -134,6 +178,18 @@ const WORLDVIEW_DATA = {
       'Cannot explain guilt, evil, or brokenness beyond blocked energy or lower consciousness.',
       'Offers transformation without a clear account of sin, forgiveness, or reconciliation.'
     ],
+    disciplineErrors: {
+      Theology: ["Collapses creator/creation distinction, making God impersonal."],
+      Philosophy: ["Monistic thinking conflates subject and object, hindering coherent metaphysics."],
+      Ethics: ["Karma-based ethics detaches responsibility from intentional repentance."],
+      Biology: ["Spiritualized biology downplays bodily significance and suffering."],
+      Psychology: ["Privatizes transformation into subjective feeling without community accountability."],
+      Sociology: ["Enables individualistic spirituality that bypasses institutional accountability."],
+      Law: ["Self-law replaces objective moral boundaries, leading to subjective norms."],
+      Politics: ["Emphasizes inner enlightenment over structural justice, neglecting institutions."],
+      Economics: ["Treats spiritual goods as commodities, promoting consumerized spirituality."],
+      History: ["Interprets history as spiritual progression rather than concrete events."]
+    },
     christianPatch: {
       Theology: 'God is personal, holy, and self-revealing, not an impersonal force.',
       Philosophy: 'Truth must be coherent and tested, not merely felt.',
@@ -149,6 +205,8 @@ const WORLDVIEW_DATA = {
   },
   islam: {
     name: 'Islam',
+    tagline: 'The Hard-Coded Legalist',
+    description: `A rigid, Closed-Source Architecture that requires 100% manual data entry with zero room for 'Grace' exceptions. The program keeps the user in a perpetual 'Request Pending' state, as the Server (God) never sends back an 'Access Granted' (Assurance) packet. It relies on a 'Performance-Based Ping' that never reaches the required threshold for a secure handshake, leaving the connection status as 'Indeterminate' until the system shuts down.`,
     status: 'INTERNAL_SERVER_ERROR',
     risk: 'Critical',
     damage_percentage: 25,
@@ -171,6 +229,18 @@ const WORLDVIEW_DATA = {
       'Rejects the crucifixion and resurrection, which removes the center of Christian atonement and hope.',
       'Cannot reconcile a holy standard with universal human failure apart from grace.'
     ],
+    disciplineErrors: {
+      Theology: ["Affirms strict monotheism but lacks a trinitarian account of relational deity."],
+      Philosophy: ["Emphasizes submission and law which can obscure personal relationality."],
+      Ethics: ["Centering obedience may underdevelop assurance and grace."],
+      Biology: ["Affirms special creation but may underemphasize incarnation and bodily redemption."],
+      Psychology: ["Stresses external conformity which can limit inner assurance."],
+      Sociology: ["Strong communal identity that can marginalize dissenting voices."],
+      Law: ["Religious law can conflate religion and state, challenging pluralism."],
+      Politics: ["Theocratic tendencies risk limiting religious freedom and shared accountability."],
+      Economics: ["Communal duties are emphasized, but market mechanisms may be downplayed."],
+      History: ["Historical narratives may prioritize unity and tradition over certain contested events."]
+    },
     christianPatch: {
       Theology: 'God is one being in three persons: Father, Son, and Holy Spirit.',
       Philosophy: 'Truth is centered in Christ, where justice and mercy meet coherently.',
@@ -190,6 +260,8 @@ const WORLDVIEW_DATA = {
 const worldviewList = document.getElementById('worldviewList');
 const activeName = document.getElementById('activeName');
 const activeStatus = document.getElementById('activeStatus');
+const activeTagline = document.getElementById('activeTagline');
+const activeDescription = document.getElementById('activeDescription');
 const disciplinesContainer = document.getElementById('disciplines');
 const analyzeBtn = document.getElementById('analyzeBtn');
 const loadingState = document.getElementById('loadingState');
@@ -197,15 +269,14 @@ const bugList = document.getElementById('bugList');
 const consoleOutput = document.getElementById('consoleOutput');
 const consoleBox = document.getElementById('consoleBox');
 const globalStatus = document.getElementById('globalStatus');
-const terminalPanel = document.getElementById('terminalPanel');
-const terminalOutput = document.getElementById('terminalOutput');
-const terminalInput = document.getElementById('terminalInput');
+// terminal removed — terminal variables deprecated
 
 const worldviewKeys = Object.keys(WORLDVIEW_DATA);
 let activeKey = worldviewKeys[0];
 let patchApplied = false;
 let analyzeTimer = null;
-let uiMode = 'ui'; // 'ui' = full interface, 'dev' = terminal-only
+// developer/terminal mode removed
+let selectedDiscipline = null; // currently-selected discipline label
 
 function escapeHtml(value) {
   return value
@@ -245,21 +316,127 @@ function renderDisciplines(worldview) {
     : Object.entries(worldview.disciplines);
 
   disciplinesContainer.innerHTML = disciplineEntries.map(([label, value]) => `
-    <article class="discipline-box">
-      <span class="discipline-label">${label}</span>
+    <article class="discipline-box" tabindex="0" role="button" data-label="${escapeHtml(label)}">
+      <div class="discipline-head"><span class="discipline-label">${label}</span><span class="discipline-status" data-dot-for="${escapeHtml(label)}"></span></div>
       <p class="discipline-text">${escapeHtml(value)}</p>
     </article>
   `).join('');
+
+  // wire click handlers for single-selection of disciplines
+  const boxes = disciplinesContainer.querySelectorAll('.discipline-box');
+  boxes.forEach((box) => {
+    const labelEl = box.querySelector('.discipline-label');
+    const label = labelEl ? labelEl.textContent.trim() : '';
+    // ensure status dot reflects persisted state
+    updateDisciplineDot(activeKey, label, box.querySelector('.discipline-status'));
+    box.setAttribute('data-discipline', label);
+    // reflect current selection state for assistive tech
+    box.setAttribute('aria-pressed', selectedDiscipline && selectedDiscipline === label ? 'true' : 'false');
+    // reflect current selection state
+    if (selectedDiscipline && selectedDiscipline === label) {
+      box.classList.add('selected');
+    } else {
+      box.classList.remove('selected');
+    }
+    box.addEventListener('click', () => {
+      // single-select: clear others
+      disciplinesContainer.querySelectorAll('.discipline-box').forEach((b) => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+      // toggle selection for clicked box
+      const nowSelected = selectedDiscipline === label ? null : label;
+      selectedDiscipline = nowSelected;
+      if (nowSelected) box.classList.add('selected');
+      else box.classList.remove('selected');
+        // ensure clicked box receives focus so focus-visible styles apply
+        if (nowSelected) box.focus();
+        // update ARIA pressed state
+        box.setAttribute('aria-pressed', nowSelected ? 'true' : 'false');
+      // update console text to indicate selected discipline in file-path style
+      consoleOutput.textContent = selectedDiscipline ? `PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline}` : `PS C:\\ProgramFiles\\${worldview.name}`;
+      // enable/disable analyze button based on selection
+      updateAnalyzeButton();
+    });
+    // support keyboard activation (Enter / Space)
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        box.click();
+      }
+    });
+  });
+  // ensure analyze button state reflects current selection
+  updateAnalyzeButton();
+}
+
+// Persisted discipline status map stored in localStorage under key 'wv_discipline_status'
+function loadDisciplineStatus() {
+  try {
+    const raw = localStorage.getItem('wv_discipline_status');
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveDisciplineStatus(map) {
+  try {
+    localStorage.setItem('wv_discipline_status', JSON.stringify(map));
+  } catch (e) {
+    // ignore
+  }
+}
+
+// Set a discipline status for a worldview ('unfixed'|'partial'|'fixed')
+function setDisciplineStatus(worldviewKey, disciplineLabel, status) {
+  const map = loadDisciplineStatus();
+  map[worldviewKey] = map[worldviewKey] || {};
+  map[worldviewKey][disciplineLabel] = status;
+  saveDisciplineStatus(map);
+  // update any visible dot in the UI
+  const selector = `.discipline-box[data-label="${CSS.escape(disciplineLabel)}"] .discipline-status`;
+  const el = document.querySelector(selector);
+  if (el) applyDotClass(el, status);
+}
+
+function applyDotClass(el, status) {
+  el.classList.remove('unfixed', 'partial', 'fixed');
+  if (status === 'fixed') el.classList.add('fixed');
+  else if (status === 'partial') el.classList.add('partial');
+  else el.classList.add('unfixed');
+}
+
+function updateDisciplineDot(worldviewKey, disciplineLabel, dotEl) {
+  if (!dotEl) return;
+  const map = loadDisciplineStatus();
+  const status = map?.[worldviewKey]?.[disciplineLabel] || 'unfixed';
+  applyDotClass(dotEl, status);
+}
+
+function updateAnalyzeButton() {
+  if (!analyzeBtn) return;
+  analyzeBtn.disabled = !selectedDiscipline;
 }
 
 function renderConsole(worldview) {
-  consoleOutput.textContent = patchApplied
-    ? `${worldview.name} patched. Running on restored doctrine set.`
-    : `${worldview.name} selected. Use Analyze System to inspect the failure points.`;
+  // update active view tagline and description
+  // remove tagline header display; only show the full description
+  if (activeTagline) activeTagline.textContent = '';
+  if (activeDescription) activeDescription.textContent = worldview.description || '';
+  if (patchApplied) {
+    consoleOutput.textContent = `${worldview.name} patched. Running on restored doctrine set.`;
+  } else {
+    // show PS-style root path when worldview is selected
+    consoleOutput.textContent = `PS C:\\ProgramFiles\\${worldview.name}`;
+  }
 
   loadingState.classList.add('hidden');
   bugList.classList.add('hidden');
   bugList.innerHTML = '';
+  // hide proposed patch box when rendering console
+  const patchBox = document.getElementById('patchBox');
+  if (patchBox) {
+    patchBox.classList.add('hidden');
+    patchBox.innerHTML = '';
+  }
 }
 
 function updateGlobalStatus() {
@@ -267,49 +444,18 @@ function updateGlobalStatus() {
     globalStatus.innerHTML = '<span class="status-dot"></span><span>System Restored</span>';
     activeStatus.textContent = 'Restored';
   } else {
-    // show a clickable UI mode toggle that switches between UI and Developer (terminal-only) modes
-    const label = uiMode === 'ui' ? 'Developer Mode':'User Interface Mode';
-    globalStatus.innerHTML = `<button id="uiModeToggle" class="status-toggle" aria-pressed="${uiMode === 'dev'}"><span class="status-dot"></span><span>${label}</span></button>`;
+    // show normal status (developer/terminal mode removed)
+    globalStatus.innerHTML = `<span class="status-dot"></span><span>Diagnostic Mode</span>`;
     activeStatus.textContent = WORLDVIEW_DATA[activeKey].status;
-
-    // wire the button (if present) to toggle the terminal panel
-    const uiBtn = document.getElementById('uiModeToggle');
-    if (uiBtn) {
-      uiBtn.addEventListener('click', () => {
-        // toggle mode
-        uiMode = uiMode === 'ui' ? 'dev' : 'ui';
-        applyUIMode();
-      });
-    }
   }
 }
 
-function applyUIMode() {
-  const selectorPanel = document.querySelector('.selector-panel');
-  const workspace = document.querySelector('.workspace');
-  if (uiMode === 'dev') {
-    // hide main UI, show terminal only
-    if (selectorPanel) selectorPanel.classList.add('hidden');
-    if (workspace) workspace.classList.add('hidden');
-    terminalPanel.classList.remove('hidden');
-    terminalPanel.setAttribute('aria-hidden', 'false');
-    document.getElementById('uiModeToggle')?.setAttribute('aria-pressed', 'true');
-    terminalInput.focus();
-  } else {
-    // show full UI, hide terminal panel
-    if (selectorPanel) selectorPanel.classList.remove('hidden');
-    if (workspace) workspace.classList.remove('hidden');
-    terminalPanel.classList.add('hidden');
-    terminalPanel.setAttribute('aria-hidden', 'true');
-    document.getElementById('uiModeToggle')?.setAttribute('aria-pressed', 'false');
-  }
-  // re-render status to update button label
-  renderWorldviewSelector();
-  updateGlobalStatus();
-}
+// applyUIMode removed — developer mode deprecated
 
 function setActiveView(key) {
   activeKey = key;
+  // clear discipline selection when switching active worldview
+  selectedDiscipline = null;
   patchApplied = false;
   document.body.classList.remove('patched');
   renderWorldviewSelector();
@@ -318,30 +464,89 @@ function setActiveView(key) {
   renderDisciplines(worldview);
   renderConsole(worldview);
   updateGlobalStatus();
+  // ensure analyze button disabled until a discipline is selected
+  updateAnalyzeButton();
   // patch button removed; keep patch logic available but UI no longer exposes it
 }
 
 function showAnalysis() {
   const worldview = WORLDVIEW_DATA[activeKey];
-  consoleBox.classList.add('scan-pulse');
+  // require a discipline to be selected — whole-worldview scans are disabled
+  if (!selectedDiscipline) {
+    loadingState.classList.add('hidden');
+    bugList.classList.add('hidden');
+    const patchBox = document.getElementById('patchBox');
+    if (patchBox) { patchBox.classList.add('hidden'); patchBox.innerHTML = ''; }
+    consoleOutput.textContent = `Please select a discipline to analyze. Click any discipline to enable analysis.`;
+    return;
+  }
+
+  // pick scanning duration randomly between 1500ms and 3500ms
+  const scanMs = Math.floor(Math.random() * 2000) + 1500;
   loadingState.classList.remove('hidden');
   bugList.classList.add('hidden');
   bugList.innerHTML = '';
-  consoleOutput.textContent = 'Scanning for logical fallacies...';
+  const patchBox = document.getElementById('patchBox');
+  if (patchBox) { patchBox.classList.add('hidden'); patchBox.innerHTML = ''; }
+
+  // set animation speed so the scan-line crosses a few times during the scan
+  const calcSpeed = `${Math.max(300, Math.floor(scanMs / 3))}ms`;
+  consoleBox.style.setProperty('--scan-speed', calcSpeed);
+  // start scan animation
+  consoleBox.classList.add('scan-pulse');
+  // mark discipline as 'partial' (scanning/in-progress)
+  setDisciplineStatus(activeKey, selectedDiscipline, 'partial');
+
+  consoleOutput.textContent = `Scanning PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline}... (~${(scanMs/1000).toFixed(1)}s)`;
   analyzeBtn.disabled = true;
 
   clearTimeout(analyzeTimer);
   analyzeTimer = setTimeout(() => {
     loadingState.classList.add('hidden');
-    bugList.innerHTML = `
-      <strong>Detected bugs</strong>
-      <ul>${worldview.bugs.map((bug) => `<li>${escapeHtml(bug)}</li>`).join('')}</ul>
-    `;
-    bugList.classList.remove('hidden');
-    consoleOutput.textContent = `${worldview.name} analyzed. Review the highlighted faults below.`;
+    // show discipline-specific errors if available
+    let bugsToShow = worldview.bugs;
+    const disciplineErrors = worldview.disciplineErrors && worldview.disciplineErrors[selectedDiscipline];
+    if (disciplineErrors && disciplineErrors.length) {
+      bugsToShow = disciplineErrors;
+    } else {
+      // fallback: try fuzzy matching inside general bugs
+      const sd = selectedDiscipline.toLowerCase();
+      const filtered = worldview.bugs.filter((b) => b.toLowerCase().includes(sd));
+      bugsToShow = filtered.length ? filtered : [];
+    }
+
+    if (bugsToShow.length) {
+      bugList.innerHTML = `
+        <strong>Detected bugs</strong>
+        <ul>${bugsToShow.map((bug) => `<li>${escapeHtml(bug)}</li>`).join('')}</ul>
+      `;
+      bugList.classList.remove('hidden');
+    } else {
+      bugList.classList.add('hidden');
+      bugList.innerHTML = '';
+    }
+
+    // show proposed biblical patch for the selected discipline
+    if (patchBox) {
+      const patchText = worldview.christianPatch && worldview.christianPatch[selectedDiscipline];
+      if (patchText) {
+        // Render patch as a bullet list to match the bugs box styling
+        patchBox.innerHTML = `<span class="patch-title">Proposed Biblical Patch (${escapeHtml(selectedDiscipline)})</span><ul>${`<li>${escapeHtml(patchText)}</li>`}</ul>`;
+        patchBox.classList.remove('hidden');
+      } else {
+        patchBox.classList.add('hidden');
+        patchBox.innerHTML = '';
+      }
+    }
+
+    // analysis complete: enable Apply Patch flow
+    consoleOutput.textContent = `PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline} analyzed.  Review the highlighted faults below.`;
+    setAnalyzeButtonToApply();
+    // stop scanning animation and clean up variable
     consoleBox.classList.remove('scan-pulse');
+    consoleBox.style.removeProperty('--scan-speed');
     analyzeBtn.disabled = false;
-  }, 1200);
+  }, scanMs);
 }
 
 function applyPatch() {
@@ -361,74 +566,66 @@ function applyPatch() {
   }, 650);
 }
 
-function appendTerminalLine(text, kind = 'output') {
-  const line = document.createElement('p');
-  line.className = 'terminal-line';
-  line.textContent = text;
-  terminalOutput.appendChild(line);
-  terminalOutput.scrollTop = terminalOutput.scrollHeight;
-  return line;
-}
-
-function renderStatusTable() {
-  const rows = worldviewKeys.map((key) => {
-    const worldview = WORLDVIEW_DATA[key];
-    const threats = worldview.threats ? worldview.threats.join(', ') : '';
-    return `${worldview.name.padEnd(20)} | ${String(worldview.status).padEnd(22)} | ${String(worldview.risk).padEnd(8)} | ${String(worldview.damage_percentage).padEnd(6)} | ${threats}`;
-  });
-  return ['Worldview            | Status                 | Risk     | Damage | Threats', '-----------------------------------------------------------------------------------------', ...rows].join('\n');
-}
-
-function handleTerminalCommand(rawCommand) {
-  const command = rawCommand.trim();
-  if (!command) return;
-
-  appendTerminalLine(`> ${command}`);
-
-  if (command === 'help') {
-    appendTerminalLine('help');
-    appendTerminalLine('status --all');
-    appendTerminalLine('patch --[worldview]');
-    return;
-  }
-
-  if (command === 'status --all') {
-    appendTerminalLine(renderStatusTable());
-    return;
-  }
-
-  if (command.startsWith('patch --')) {
-    const target = command.replace('patch --', '').trim().toLowerCase();
-    const matchKey = worldviewKeys.find((key) => WORLDVIEW_DATA[key].name.toLowerCase() === target || key === target);
-    if (!matchKey) {
-      appendTerminalLine(`Unknown worldview: ${target}`);
-      return;
-    }
-
-    activeKey = matchKey;
-    setActiveView(matchKey);
-    applyPatch();
-    appendTerminalLine(`Patch executed for ${WORLDVIEW_DATA[matchKey].name}.`);
-    return;
-  }
-
-  appendTerminalLine('Unknown command. Type help for available commands.');
-}
-
-function initTerminal() {
-  terminalOutput.innerHTML = '';
-  appendTerminalLine('Terminal online. Type help for commands.');
-  terminalInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      handleTerminalCommand(event.target.value);
-      event.target.value = '';
-    }
-  });
-
-}
+// terminal removed — command helpers deleted
 
 analyzeBtn.addEventListener('click', showAnalysis);
 
+function setAnalyzeButtonToApply() {
+  analyzeBtn.textContent = 'Apply Patch';
+  // swap handler
+  analyzeBtn.removeEventListener('click', showAnalysis);
+  analyzeBtn.addEventListener('click', applyPatchForSelected);
+  analyzeBtn.classList.remove('btn-analyze');
+  analyzeBtn.classList.add('btn-apply');
+}
+
+function setAnalyzeButtonToAnalyze() {
+  analyzeBtn.textContent = 'Analyze System';
+  analyzeBtn.removeEventListener('click', applyPatchForSelected);
+  analyzeBtn.addEventListener('click', showAnalysis);
+  analyzeBtn.classList.remove('btn-apply');
+  analyzeBtn.classList.add('btn-analyze');
+}
+
+function applyPatchForSelected() {
+  const worldview = WORLDVIEW_DATA[activeKey];
+  if (!selectedDiscipline) return;
+  // visually apply patch
+  setDisciplineStatus(activeKey, selectedDiscipline, 'fixed');
+  // show brief feedback
+  consoleBox.classList.add('recode-flash');
+  consoleOutput.textContent = `${selectedDiscipline} patched. Applying biblical response...`;
+  // update patchBox to reflect applied state
+  const patchBox = document.getElementById('patchBox');
+  if (patchBox) {
+    const patchText = worldview.christianPatch && worldview.christianPatch[selectedDiscipline];
+    if (patchText) {
+      patchBox.innerHTML = `<span class="patch-title">Applied Biblical Patch (${escapeHtml(selectedDiscipline)})</span><ul><li>${escapeHtml(patchText)}</li></ul>`;
+      patchBox.classList.remove('hidden');
+    }
+  }
+  // restore button to Analyze after short delay
+  setTimeout(() => {
+    consoleBox.classList.remove('recode-flash');
+    setAnalyzeButtonToAnalyze();
+    // keep analyze disabled until user re-selects or leaves selection
+    analyzeBtn.disabled = false;
+  }, 700);
+}
+
 renderWorldviewSelector();
 setActiveView(activeKey);
-initTerminal();
+// terminal removed — initTerminal deprecated
+
+// wire Reset Session button
+const resetSessionBtn = document.getElementById('resetSessionBtn');
+if (resetSessionBtn) {
+  resetSessionBtn.addEventListener('click', () => {
+    if (!confirm('Reboot OS and clear saved discipline statuses?')) return;
+    try {
+      localStorage.removeItem('wv_discipline_status');
+    } catch (e) {}
+    // re-render current view to reflect cleared statuses
+    renderDisciplines(WORLDVIEW_DATA[activeKey]);
+  });
+}
