@@ -1,7 +1,6 @@
 const WORLDVIEW_DATA = {
   secularism: {
     name: 'Secularism',
-    tagline: 'The Dependency Ghost',
     description: `This program attempts to execute high-level ethical functions like Human_Rights.exe and Objective_Justice.pkg while having deleted the core Creator.dll dependency. It relies on 'Legacy Emulation'—running on the memory of a Christian past—but because the backend server has been disconnected, the system is prone to 'Logic Ghosting' where values remain on screen but have no data supporting them in the BIOS.`,
     status: 'SYSTEM_DEPENDENCY_ERROR',
     risk: 'Moderate',
@@ -52,7 +51,6 @@ const WORLDVIEW_DATA = {
   },
   marxism: {
     name: 'Marxism',
-    tagline: 'The Resource Hijacker',
     description: `This system operates as a Totalitarian Kernel Override. It attempts to force-quit all individual user processes (Imago_Dei.user) to prioritize a single, collective system task. However, because it lacks a 'Moral Firewall,' the program is easily hijacked by 'Power_Lust' malware. It promises to optimize system resources but historically results in a 'Total System Wipe' and permanent 'Kernel Panic'.`,
     status: 'SYSTEM_TAKEOVER_IMMINENT',
     risk: 'Critical',
@@ -103,7 +101,6 @@ const WORLDVIEW_DATA = {
   },
   postmodernism: {
     name: 'Postmodernism',
-    tagline: 'The Recursive Loop',
     description: `A highly unstable build characterized by Circular Logic Recursion. The program’s primary directive is to output Error: Truth_Not_Found, but it uses an absolute truth-claim to verify that no absolute truth exists. This creates an infinite loop that eventually crashes the compiler. It refuses to map to any external hardware (Reality), insisting that the software is the only thing that exists, yet the software cannot define itself.`,
     status: 'CIRCULAR_DEPENDENCY_DETECTED',
     risk: 'Moderate',
@@ -154,7 +151,6 @@ const WORLDVIEW_DATA = {
   },
   newSpirituality: {
     name: 'New Spirituality',
-    tagline: 'The Cloud-Only Sync',
     description: `This program uploads all local data to 'The Great Cloud' (Universal Consciousness) until nothing remains grounded on the physical device. It suffers from Parity Bit Mismatch—by claiming that 'All Data is One,' it loses the ability to distinguish between 'Safe' and 'Malicious' files. If everything is the same piece of code, the system can no longer identify or delete 'Sin' or 'Error' subroutines.`,
     status: 'CLOUD_SERVICE_OVERLOAD',
     risk: 'Moderate',
@@ -205,7 +201,6 @@ const WORLDVIEW_DATA = {
   },
   islam: {
     name: 'Islam',
-    tagline: 'The Hard-Coded Legalist',
     description: `A rigid, Closed-Source Architecture that requires 100% manual data entry with zero room for 'Grace' exceptions. The program keeps the user in a perpetual 'Request Pending' state, as the Server (God) never sends back an 'Access Granted' (Assurance) packet. It relies on a 'Performance-Based Ping' that never reaches the required threshold for a secure handshake, leaving the connection status as 'Indeterminate' until the system shuts down.`,
     status: 'INTERNAL_SERVER_ERROR',
     risk: 'Critical',
@@ -260,7 +255,7 @@ const WORLDVIEW_DATA = {
 const worldviewList = document.getElementById('worldviewList');
 const activeName = document.getElementById('activeName');
 const activeStatus = document.getElementById('activeStatus');
-const activeTagline = document.getElementById('activeTagline');
+// tagline element removed; tagline property removed from data
 const activeDescription = document.getElementById('activeDescription');
 const disciplinesContainer = document.getElementById('disciplines');
 const analyzeBtn = document.getElementById('analyzeBtn');
@@ -338,6 +333,15 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+// Get the display string for a discipline (use belief value when available)
+function getDisciplineDisplay(worldview, label) {
+  if (!worldview || !label) return label || '';
+  // prefer applied patch text if patchApplied is true and christianPatch exists
+  if (patchApplied && worldview.christianPatch && worldview.christianPatch[label]) return worldview.christianPatch[label];
+  if (worldview.disciplines && worldview.disciplines[label]) return worldview.disciplines[label];
+  return label;
 }
 
 function renderWorldviewSelector() {
@@ -423,7 +427,8 @@ function renderDisciplines(worldview) {
         // update ARIA pressed state
         box.setAttribute('aria-pressed', nowSelected ? 'true' : 'false');
       // update console text to indicate selected discipline in file-path style
-      consoleOutput.textContent = selectedDiscipline ? `PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline}` : `PS C:\\ProgramFiles\\${worldview.name}`;
+      const disp = selectedDiscipline ? getDisciplineDisplay(worldview, selectedDiscipline) : null;
+      consoleOutput.textContent = disp ? `PS C:\\ProgramFiles\\${worldview.name}\\${disp}` : `PS C:\\ProgramFiles\\${worldview.name}`;
       // enable/disable analyze button based on selection
       updateAnalyzeButton();
     });
@@ -491,7 +496,7 @@ function updateAnalyzeButton() {
 function renderConsole(worldview) {
   // update active view tagline and description
   // remove tagline header display; only show the full description
-  if (activeTagline) activeTagline.textContent = '';
+  // activeTagline removed
   if (activeDescription) activeDescription.textContent = worldview.description || '';
   if (patchApplied) {
     consoleOutput.textContent = `${worldview.name} patched. Running on restored doctrine set.`;
@@ -573,7 +578,8 @@ function showAnalysis() {
   // mark discipline as 'partial' (scanning/in-progress)
   setDisciplineStatus(activeKey, selectedDiscipline, 'partial');
 
-  consoleOutput.textContent = `Scanning PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline}... (~${(scanMs/1000).toFixed(1)}s)`;
+  const scanDisp = getDisciplineDisplay(worldview, selectedDiscipline);
+  consoleOutput.textContent = `Scanning PS C:\\ProgramFiles\\${worldview.name}\\${scanDisp}... (~${(scanMs/1000).toFixed(1)}s)`;
   analyzeBtn.disabled = true;
 
   clearTimeout(analyzeTimer);
@@ -617,7 +623,8 @@ function showAnalysis() {
     }
 
     // analysis complete: enable Apply Patch flow
-    consoleOutput.textContent = `PS C:\\ProgramFiles\\${worldview.name}\\${selectedDiscipline} analyzed.  Review the highlighted faults below.`;
+    const analyzedDisp = getDisciplineDisplay(worldview, selectedDiscipline);
+    consoleOutput.textContent = `PS C:\\ProgramFiles\\${worldview.name}\\${analyzedDisp} analyzed.  Review the highlighted faults below.`;
     setAnalyzeButtonToApply();
     // stop scanning animation and clean up variable
     consoleBox.classList.remove('scan-pulse');
