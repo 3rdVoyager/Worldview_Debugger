@@ -12,72 +12,124 @@
 <body>
   <main class="app-shell">
     <header class="hero">
-      <div>
-        <h1>The Worldview Debugger</h1>
-        <p class="hero-copy">
-          Inspect buggy worldview programs, scan for logical faults, and apply the biblical patch to restore the system.
-        </p>
+      <div class="hero-left">
+        <nav class="top-menu" role="navigation" aria-label="Main">
+          <button class="menu-tab active" data-tab="home">Home</button>
+          <button class="menu-tab" data-tab="scan">Scan Worldview Drive</button>
+          <button class="menu-tab" data-tab="debug">Debug Critical Files</button>
+          <button class="menu-tab" data-tab="status">Status</button>
+        </nav>
+        <div class="hero-title">
+          <h1>The Worldview Debugger</h1>
+          <p class="hero-copy">Inspect buggy worldview programs, scan for logical faults, and apply the biblical patch to restore the system.</p>
+        </div>
       </div>
       <div class="hero-status" id="globalStatus">
         <span class="status-dot" aria-hidden="true"></span>
       </div>
-      <div style="margin-left:16px">
+      <div class="hero-controls">
+        <button id="plainToggleBtn" class="btn btn-ghost">Plain English</button>
         <button id="resetSessionBtn" class="btn btn-ghost">Reboot OS</button>
       </div>
     </header>
 
-    <section class="selector-panel" aria-label="Worldview selection">
-      <div class="selector-header">
-        <div>
-          <p class="panel-label">Worldview Program Database</p>
-          <h2 class="selector-title">Choose a program to inspect</h2>
-        </div>
-      </div>
-      <ul class="worldview-list" id="worldviewList" aria-label="Available worldviews"></ul>
-    </section>
+    <!-- Pages: Home, Scan, Debug - only one visible at a time -->
+    <div id="page-home" class="page">
+      <section class="home-panel">
+        <div class="home-hero">
+          <h2>Worldview Debugger — Quick Start</h2>
+          <p class="hero-copy">Scan a worldview, inspect discipline diagnostics, and apply a corrective patch informed by Biblical principles.</p>
 
-    <section class="workspace">
-      <div class="workspace-panel">
-        <div class="panel-header">
-          <div>
-            <p class="panel-label">Active View</p>
-            <h2 id="activeName">Naturalism</h2>
+          <div class="home-description">
+            <h3>What is this program?</h3>
+            <p>The Worldview Debugger is a lightweight investigative tool that models a "worldview program" made up of ten disciplines (for example: Epistemology, Ethics, Science). It scans those disciplines for common conceptual errors, surfaces concise, plain-language diagnostics, and proposes a short corrective patch rooted in biblical reasoning. Use it to examine assumptions, compare repair status across worldviews, and rehearse how a targeted correction affects the whole system.</p>
+            <p class="muted">Designed for learning and discussion — not an automated theology authority. Patches are illustrative suggestions, not prescriptions.</p>
+          </div>
+
+          <ol class="home-steps">
+            <li class="home-step"><strong>Choose a worldview:</strong> On the <em>Scan</em> page select a worldview program from the database.</li>
+            <li class="home-step"><strong>Analyze disciplines:</strong> Pick one or more disciplines and click <em>Analyze Program</em> to run the diagnostic scan.</li>
+            <li class="home-step"><strong>Review findings:</strong> The console will list detected issues and propose a concise patch for each vulnerable discipline.</li>
+            <li class="home-step"><strong>Apply patch:</strong> Apply the proposed patch to mark the discipline as repaired. Use <em>Debug</em> to view repair status across worldviews.</li>
+          </ol>
+
+          <div class="home-actions">
+            <button id="homeDebugBtnLarge" class="btn btn-primary">Debug Critical Files</button>
+            <button id="homeHelpBtn" class="btn btn-ghost">How it works</button>
+          </div>
+
+          <div id="homeCriticalListLarge" class="home-critical" aria-live="polite"></div>
+
+          <div class="home-note">
+            <p><strong>Tip:</strong> Use the "Plain English" toggle in the header to switch between technical diagnostics and a simpler description of proposed patches.</p>
           </div>
         </div>
+      </section>
+    </div>
 
-        <div class="panel-meta">
-          <p id="activeTagline" class="panel-subtitle"></p>
-          <div id="activeBadges" class="worldview-badges"></div>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <div id="plainToggleWrapper">
-              <input type="checkbox" id="plainToggle" />
-              <label for="plainToggle"><span class="toggle-pill" aria-hidden="true"></span>Plain English</label>
+    <!-- Status page (placeholder) - left intentionally blank for now -->
+    <div id="page-status" class="page hidden">
+      <section class="empty-page"></section>
+    </div>
+
+    <!-- Keep the Scan page as a compact action area for quick scans (separate from the detailed Status page) -->
+    <div id="page-scan" class="page hidden">
+      <section class="scan-hero">
+        <h2>Quick Scan</h2>
+        <p class="hero-copy">Run a lightweight scan across the active worldview disciplines. For full inspection and console output, use the Debug Critical Files tab.</p>
+        <div class="home-actions"><button id="quickScanBtn" class="btn btn-primary">Run Quick Scan</button></div>
+        <div id="quickScanSummary" style="margin-top:12px;"></div>
+      </section>
+    </div>
+
+    <!-- Debug page: detailed selector/workspace/console — only this tab shows the full UI -->
+    <div id="page-debug" class="page hidden">
+      <section class="selector-panel" aria-label="Worldview selection">
+        <div class="selector-header">
+          <div>
+            <p class="panel-label">Worldview Program Database</p>
+            <h2 class="selector-title">Choose a program to inspect</h2>
+          </div>
+        </div>
+        <ul class="worldview-list" id="worldviewList" aria-label="Available worldviews"></ul>
+      </section>
+
+      <section class="workspace">
+        <div class="workspace-panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-label">Active View</p>
+              <h2 id="activeName">Naturalism</h2>
             </div>
           </div>
-          <p id="activeDescription" class="panel-description"></p>
+
+          <div class="panel-meta">
+            <div id="activeBadges" class="worldview-badges"></div>
+            <p id="activeDescription" class="panel-description"></p>
+          </div>
+
+          <div class="disciplines" id="disciplines"></div>
+
+          <div class="action-row">
+            <button class="btn btn-ghost" id="analyzeBtn">Analyze Program</button>
+          </div>
         </div>
 
-        <div class="disciplines" id="disciplines"></div>
-
-        <div class="action-row">
-          <button class="btn btn-ghost" id="analyzeBtn">Analyze Program</button>
-        </div>
-      </div>
-
-      <aside class="console-panel">
-        <div class="console-title-row">
-          <p class="panel-label">Diagnostic Console</p>
-          <span class="console-led"></span>
-        </div>
-        <div class="console-box" id="consoleBox">
-          <div class="console-output" id="consoleOutput"></div>
-          <div class="scan-line" aria-hidden="true"></div>
-          <div class="console-loading hidden" id="loadingState">Scanning for logical fallacies...</div>
-          <div class="console-bugs hidden" id="bugList"></div>
-          <div class="proposed-patch hidden" id="patchBox" aria-live="polite"></div>
-        </div>
-      </aside>
-    </section>
+        <aside class="console-panel">
+          <div class="console-title-row">
+            <p class="panel-label">Diagnostic Console</p>
+            <span class="console-led"></span>
+          </div>
+          <div class="console-box" id="consoleBox">
+            <div class="console-output" id="consoleOutput"></div>
+            <div class="scan-line" aria-hidden="true"></div>
+            <div class="console-loading hidden" id="loadingState">Scanning for logical fallacies...</div>
+            <div class="console-bugs hidden" id="bugList"></div>
+            <div class="proposed-patch hidden" id="patchBox" aria-live="polite"></div>
+          </div>
+        </aside>
+      </section>
+    </div>
 
     <!-- terminal removed — developer mode deprecated -->
   </main>

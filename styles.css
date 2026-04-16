@@ -199,47 +199,20 @@ body::after {
 #activeBadges { display:flex; gap:8px; margin:0 0 12px; align-items:center; flex-wrap:nowrap; overflow:hidden; }
 #activeBadges .bubble { padding: 6px 12px; font-size: 0.78rem; border-radius: 14px; }
 /* Plain English toggle styling - faux toggle switch */
-#plainToggleWrapper { margin-left: 0; display:flex; align-items:center; gap:8px; }
-#plainToggle { position: absolute; left: -9999px; opacity: 0; }
-label[for="plainToggle"] {
+#plainToggleBtn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  user-select: none;
-  font-family: 'IBM Plex Mono', monospace;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.06);
 }
-label[for="plainToggle"] .toggle-pill {
-  width: 44px;
-  height: 22px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  padding: 3px;
-  display: inline-block;
-  position: relative;
-  transition: background 180ms ease;
-}
-label[for="plainToggle"] .toggle-pill::after {
-  content: '';
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  position: absolute;
-  left: 3px;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  transition: left 160ms ease, background 160ms ease;
-}
-#plainToggle:checked + label[for="plainToggle"] .toggle-pill {
-  background: linear-gradient(90deg, #10b981, #22c55e);
-}
-#plainToggle:checked + label[for="plainToggle"] .toggle-pill::after {
-  left: 25px;
-  background: white;
+#plainToggleBtn.active {
+  background: linear-gradient(90deg, #0ea5a0, #10b981);
+  color: #04261a;
+  border-color: rgba(16,185,129,0.9);
 }
 .bubble.bubble-damage::before { background: #6366f1; }
 
@@ -288,6 +261,74 @@ label[for="plainToggle"] .toggle-pill::after {
   align-items: flex-start;
   gap: 24px;
   margin-bottom: 28px;
+}
+
+.top-menu {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.menu-tab {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.menu-tab.active {
+  background: rgba(255,255,255,0.04);
+  color: #ecfdf5;
+  border-color: rgba(255,255,255,0.12);
+}
+.hero-title h1 { font-size: 1.6rem; margin: 0; }
+.hero-title .hero-copy { margin: 6px 0 0; }
+
+/* Page container handling */
+.page { padding: 18px 0; }
+.hidden { display: none !important; }
+
+/* Home page styles */
+#page-home .home-hero { text-align: center; padding: 36px 24px; border-radius: 12px; background: rgba(255,255,255,0.02); }
+#page-home .home-hero h2 { margin: 0 0 12px; }
+
+/* Home layout */
+.home-steps { counter-reset: step; margin: 18px auto; max-width: 720px; text-align: left; padding-left: 0; }
+.home-steps .home-step { list-style: none; margin: 10px 0; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); }
+.home-steps .home-step:before { counter-increment: step; content: counter(step) ". "; font-weight: 700; margin-right: 8px; color: var(--muted); }
+.home-actions { margin-top: 18px; display:flex; gap:12px; justify-content:center; }
+.home-critical { margin-top: 14px; max-width: 760px; margin-left: auto; margin-right: auto; text-align: left; }
+.home-note { margin-top: 16px; font-size: 0.95rem; color: var(--muted); max-width: 760px; margin-left:auto; margin-right:auto; }
+.home-hero .hero-copy { max-width: 760px; margin: 6px auto 12px; color: var(--muted); }
+
+/* small responsive tweaks */
+@media (max-width: 740px) {
+  .home-steps { padding: 0 10px; }
+  .home-actions { flex-direction: column; }
+}
+
+/* Home description styling */
+.home-description { max-width: 760px; margin: 10px auto 18px; text-align: left; background: rgba(255,255,255,0.02); padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.02); }
+.home-description h3 { margin: 0 0 8px; }
+.home-description p { margin: 6px 0; color: var(--muted); }
+.muted { color: var(--muted); font-size: 0.95rem; }
+
+/* Debug page styles */
+#page-debug .debug-panel { padding: 12px; }
+.debug-overview { display:flex; flex-wrap:wrap; gap:12px; }
+.debug-worldview { width: 260px; padding:10px; border:1px solid rgba(255,255,255,0.04); border-radius:8px; background: rgba(0,0,0,0.2); }
+
+.hero-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-controls #plainToggleWrapper {
+  margin-left: 0;
+}
+
+.hero-controls .btn {
+  padding: 8px 12px;
 }
 
 .eyebrow,

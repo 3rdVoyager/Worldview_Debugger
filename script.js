@@ -19,10 +19,8 @@ const WORLDVIEW_DATA = {
       History: 'Social Progress'
     },
     bugs: [
-      'Borrows moral language from a worldview that has no transcendent moral source.',
-      'Treats human dignity as self-evident, but cannot explain why people have inherent worth.',
-      'Makes autonomy the highest good while depending on shared norms it cannot ultimately justify.',
       'Promises progress without a fixed standard for what counts as moral improvement.'
+ 
     ],
     disciplineErrors: {
       Theology: ["Denies transcendent moral grounding, leaving ethics unsupported."],
@@ -272,6 +270,188 @@ let patchApplied = false;
 let analyzeTimer = null;
 // developer/terminal mode removed
 let selectedDiscipline = null; // currently-selected discipline label
+
+// wire top menu tabs
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.menu-tab');
+  tabs.forEach(tab => tab.addEventListener('click', (e) => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const tabName = tab.dataset.tab;
+    // show/hide full-page panels per tab
+    const pageHome = document.getElementById('page-home');
+    const pageScan = document.getElementById('page-scan');
+    const pageStatus = document.getElementById('page-status');
+    const pageDebug = document.getElementById('page-debug');
+    if (tabName === 'home') {
+      pageHome.classList.remove('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
+      // render interactive home area
+      const btnLarge = document.getElementById('homeDebugBtnLarge');
+      if (btnLarge) btnLarge.addEventListener('click', () => showCriticalFiles(activeKey));
+      // also populate the smaller home area
+      const homeList = document.getElementById('homeCriticalListLarge');
+      if (homeList) homeList.innerHTML = '';
+    } else if (tabName === 'scan') {
+      // lightweight quick-scan page
+      pageHome.classList.add('hidden'); pageScan.classList.remove('hidden'); pageDebug.classList.add('hidden');
+      const quickBtn = document.getElementById('quickScanBtn');
+      if (quickBtn) quickBtn.addEventListener('click', runQuickScan);
+      const summary = document.getElementById('quickScanSummary'); if (summary) summary.innerHTML = '';
+    } else if (tabName === 'status') {
+      // Status tab left intentionally blank for now
+      pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageDebug.classList.add('hidden');
+      if (pageStatus) pageStatus.classList.remove('hidden');
+    } else if (tabName === 'debug') {
+      // Debug tab shows the full selector/workspace/console UI
+      pageHome.classList.add('hidden'); pageScan.classList.add('hidden'); pageStatus.classList.add('hidden');
+      if (pageDebug) pageDebug.classList.remove('hidden');
+      renderWorldviewSelector(); setActiveView(activeKey);
+      const consoleOut = document.getElementById('consoleOutput');
+      if (consoleOut) renderScanView(consoleOut);
+    }
+  }));
+  // ensure the currently-marked active tab initializes on page load
+  const activeTab = document.querySelector('.menu-tab.active');
+  if (activeTab) {
+    // call its click handler to render the appropriate page
+    activeTab.click();
+  }
+});
+
+function renderHome(targetEl) {
+  const html = `
+    <h3>Welcome — Worldview Debugger</h3>
+    <p>This tool inspects modeled "worldview programs" and helps you identify logical faults in specific disciplines.</p>
+    <p>How to use:</p>
+    <ol>
+      <li>Select a worldview from the left column.</li>
+      <li>Choose a discipline (e.g., Theology, Ethics) and click <strong>Analyze Program</strong>.</li>
+      <li>Read detected issues and the proposed Christian patch in the Proposed Patch panel.</li>
+      <li>Apply the patch to mark the discipline as fixed. Use <strong>Reboot OS</strong> to clear saved state.</li>
+    </ol>
+    <p>Tabs:</p>
+    <ul>
+      <li><strong>Home</strong>: this help and overview.</li>
+      <li><strong>Scan Worldview Drive</strong>: run a broad scan across the active worldview (simulated).</li>
+      <li><strong>Debug Critical Files</strong>: focus on the most vulnerable disciplines.</li>
+    </ul>
+    <p>Tips: disable selection while scanning; use the Plain English toggle for readable summaries.</p>
+  `;
+  targetEl.innerHTML = html;
+}
+
+// Render a Home-specific interactive area that centers on Debug Critical Files
+function renderHomeInteractive() {
+  const consoleOut = document.getElementById('consoleOutput');
+  if (!consoleOut) return;
+  consoleOut.innerHTML = `
+    <div class="home-debug">
+      <h3>Debug Critical Files</h3>
+      <p>Click the button below to scan the active worldview for its most critical faults and apply repairs automatically.</p>
+      <div style="margin:12px 0;"><button id="homeDebugBtn" class="btn">Debug Critical Files</button></div>
+      <div id="homeCriticalList" class="console-bugs"></div>
+    </div>
+  `;
+
+  const btn = document.getElementById('homeDebugBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // show critical items for the active worldview
+      showCriticalFiles(activeKey);
+    });
+  }
+}
+
+function showCriticalFiles(key) {
+  const listEl = document.getElementById('homeCriticalList');
+  const consoleOut = document.getElementById('consoleOutput');
+  if (!listEl || !consoleOut) return;
+  const worldview = WORLDVIEW_DATA[key];
+  // use the worldview.bugs and disciplineErrors to create a critical list
+  const bugs = worldview.bugs || [];
+  const critical = bugs.slice(0, 6); // top items
+  const disciplines = Object.keys(worldview.disciplineErrors || {});
+  listEl.innerHTML = `<h4>Critical Issues</h4><ul>${critical.map(b => `<li>${escapeHtml(b)}</li>`).join('')}</ul>` +
+    `<h4>Vulnerable Disciplines</h4><ul>${disciplines.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul>` +
+    `<div style="margin-top:10px;"><button id="runHomeDebug" class="btn btn-primary">Run Auto-Debug (apply patches)</button></div>`;
+
+  const runBtn = document.getElementById('runHomeDebug');
+  if (runBtn) {
+    runBtn.addEventListener('click', async () => {
+      await runAutoDebug(key, disciplines);
+    });
+  }
+}
+
+async function runAutoDebug(key, disciplines) {
+  const listEl = document.getElementById('homeCriticalList');
+  if (!listEl) return;
+  listEl.innerHTML = '<p>Running auto-debug... this may take a few seconds.</p>';
+  // simulate scanning each discipline and apply patch
+  for (const d of disciplines) {
+    await new Promise(r => setTimeout(r, 700));
+    setDisciplineStatus(key, d, 'partial');
+    listEl.insertAdjacentHTML('beforeend', `<p>Scanned ${escapeHtml(d)} — applying patch...</p>`);
+    await new Promise(r => setTimeout(r, 600));
+    setDisciplineStatus(key, d, 'fixed');
+    listEl.insertAdjacentHTML('beforeend', `<p>Patched ${escapeHtml(d)}</p>`);
+  }
+  listEl.insertAdjacentHTML('beforeend', `<p><strong>Auto-debug complete.</strong></p>`);
+  // refresh disciplines UI
+  renderDisciplines(WORLDVIEW_DATA[activeKey]);
+}
+
+function renderDebugView(targetEl) {
+  const statusMap = loadDisciplineStatus();
+  let html = '<h3>Debug Critical Files — Current Status</h3>';
+  html += '<div class="debug-overview">';
+  Object.keys(WORLDVIEW_DATA).forEach((k) => {
+    const w = WORLDVIEW_DATA[k];
+    html += `<section class="debug-worldview"><h4>${escapeHtml(w.name)}</h4><ul>`;
+    (Object.keys(w.disciplines || {})).forEach((d) => {
+      const st = (statusMap?.[k]?.[d]) || 'unscanned';
+      html += `<li>${escapeHtml(d)} — <strong>${escapeHtml(st)}</strong></li>`;
+    });
+    html += `</ul><div><button class="btn btn-ghost view-critical" data-key="${k}">View Critical Issues</button></div></section>`;
+  });
+  html += '</div>';
+  targetEl.innerHTML = html;
+
+  // wire view-critical buttons
+  targetEl.querySelectorAll('.view-critical').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const key = btn.dataset.key;
+      showCriticalFiles(key);
+    });
+  });
+}
+
+function renderScanView(targetEl) {
+  const html = `
+    <h3>Scan Worldview Drive</h3>
+    <p>Simulate a scan of the active worldview and report progress.</p>
+    <div style="margin:12px 0;"><button id="startScanBtn" class="btn btn-primary">Start Scan</button></div>
+    <div id="scanOutput"></div>
+  `;
+  targetEl.innerHTML = html;
+  const start = document.getElementById('startScanBtn');
+  const out = document.getElementById('scanOutput');
+  if (start) start.addEventListener('click', async () => {
+    out.innerHTML = `<p>Scanning ${escapeHtml(WORLDVIEW_DATA[activeKey].name)}...</p>`;
+    const disciplines = Object.keys(WORLDVIEW_DATA[activeKey].disciplines || {});
+    for (const d of disciplines) {
+      out.insertAdjacentHTML('beforeend', `<p>Scanning ${escapeHtml(d)}...</p>`);
+      await new Promise(r => setTimeout(r, 450));
+      const map = loadDisciplineStatus();
+      const st = map?.[activeKey]?.[d] || 'unscanned';
+      out.insertAdjacentHTML('beforeend', `<p>Status: <strong>${escapeHtml(st)}</strong></p>`);
+    }
+    const map = loadDisciplineStatus();
+    const fixed = Object.values(map[activeKey] || {}).filter(v => v === 'fixed').length;
+    const total = Object.keys(WORLDVIEW_DATA[activeKey].disciplines || {}).length;
+    out.insertAdjacentHTML('beforeend', `<p><strong>Scan complete.</strong> ${fixed}/${total} disciplines fixed.</p>`);
+  });
+}
 
 // human-friendly applied patch titles for display
 const APPLIED_PATCH_TITLES = {
@@ -725,16 +905,20 @@ setActiveView(activeKey);
 // terminal removed — initTerminal deprecated
 
 // wire Plain English toggle
-const plainToggle = document.getElementById('plainToggle');
-if (plainToggle) {
-  plainToggle.addEventListener('change', (e) => {
-    plainEnglishMode = !!e.target.checked;
-    const worldview = WORLDVIEW_DATA[activeKey];
-    renderDescription(worldview);
+const plainToggleBtn = document.getElementById('plainToggleBtn');
+if (plainToggleBtn) {
+  plainToggleBtn.addEventListener('click', (e) => {
+    plainEnglishMode = !plainEnglishMode;
+    // button visual state
+    if (plainEnglishMode) plainToggleBtn.classList.add('active');
+    else plainToggleBtn.classList.remove('active');
+    // update label text
+    plainToggleBtn.textContent = plainEnglishMode ? 'Terminal Language' : 'Plain English';
+    renderDescription(WORLDVIEW_DATA[activeKey]);
   });
 }
-
 // wire Reset Session button
+ 
 const resetSessionBtn = document.getElementById('resetSessionBtn');
 if (resetSessionBtn) {
   resetSessionBtn.addEventListener('click', () => {
